@@ -1,0 +1,16 @@
+[
+  {
+    "advisories": [],
+    "available": "121.0.0",
+    "command": "brew upgrade --cask example-browser",
+    "id": "cask/example-browser",
+    "installed": "120.0.1",
+    "kind": "update",
+    "package": "example-browser",
+    "remediation": "Update the app. Homebrew does not say whether this update contains security fixes.",
+    "severity": "unknown",
+    "source": "cask",
+    "title": "example-browser 120.0.1: 121.0.0 is available",
+    "url": "https://formulae.brew.sh/cask/example-browser"
+  }
+]

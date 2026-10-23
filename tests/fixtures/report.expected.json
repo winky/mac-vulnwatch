@@ -1,0 +1,3 @@
+{
+  "markdown": "# mac-vulnwatch report: test-mac\n\nScanned at 2099-01-01T00:00:00Z by mac-vulnwatch 0.0.0.\n\n| Source | Status | Findings |\n|---|---|---|\n| brew | ok | 2 |\n| mas | skipped (mas is not installed) | 0 |\n\n## Findings\n\n| Severity | Source | Finding | Fix |\n|---|---|---|---|\n| high | brew | openssl@3 3.6.4: 2 known vulnerabilities | `brew upgrade openssl@3` |\n| unknown | brew | examplelib 1.2.0: 1 known vulnerability | No newer version in Homebrew yet. Follow the advisories, or uninstall the formula if nothing needs it. |\n\n"
+}

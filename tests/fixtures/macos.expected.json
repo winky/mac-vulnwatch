@@ -1,0 +1,30 @@
+[
+  {
+    "advisories": [],
+    "available": "26.1",
+    "command": "softwareupdate --install 'macOS Tahoe 26.1-25B78'",
+    "id": "macos/macos-tahoe",
+    "installed": "-",
+    "kind": "update",
+    "package": "macOS Tahoe",
+    "remediation": "Install it from System Settings > General > Software Update (restarts the Mac). Apple marks it as recommended.",
+    "severity": "unknown",
+    "source": "macos",
+    "title": "macOS Tahoe 26.1 is not installed",
+    "url": "https://support.apple.com/en-us/100100"
+  },
+  {
+    "advisories": [],
+    "available": "26.1",
+    "command": "softwareupdate --install 'Command Line Tools for Xcode 26.1-26.1'",
+    "id": "macos/command-line-tools-for-xcode",
+    "installed": "-",
+    "kind": "update",
+    "package": "Command Line Tools for Xcode",
+    "remediation": "Install it from System Settings > General > Software Update. Apple marks it as recommended.",
+    "severity": "unknown",
+    "source": "macos",
+    "title": "Command Line Tools for Xcode 26.1 is not installed",
+    "url": "https://support.apple.com/en-us/100100"
+  }
+]

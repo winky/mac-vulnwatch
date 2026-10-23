@@ -1,0 +1,125 @@
+{
+  "host": "test-mac",
+  "report": {
+    "scanned_at": "2099-01-01T00:00:00Z",
+    "sources": {
+      "brew": {
+        "status": "ok"
+      },
+      "mas": {
+        "status": "failed",
+        "error": "boom"
+      }
+    },
+    "findings": [
+      {
+        "id": "brew/openssl@3",
+        "source": "brew",
+        "kind": "vulnerability",
+        "package": "openssl@3",
+        "installed": "3.6.4",
+        "available": "3.6.5",
+        "severity": "high",
+        "title": "openssl@3 3.6.4: 2 known vulnerabilities",
+        "remediation": "Upgrade to 3.6.5. A newer release does not always carry the fix, so check the advisories.",
+        "command": "brew upgrade openssl@3",
+        "url": "https://github.com/openssl/openssl",
+        "advisories": [
+          {
+            "id": "CVE-2099-0001",
+            "severity": "high",
+            "summary": "Example overflow in the | parser",
+            "fixed": [
+              "3.6.5"
+            ],
+            "url": "https://osv.dev/vulnerability/CVE-2099-0001"
+          },
+          {
+            "id": "CVE-2099-0002",
+            "severity": "low",
+            "summary": "Example timing leak",
+            "fixed": [],
+            "url": "https://osv.dev/vulnerability/CVE-2099-0002"
+          }
+        ]
+      },
+      {
+        "id": "brew/examplelib",
+        "source": "brew",
+        "kind": "vulnerability",
+        "package": "examplelib",
+        "installed": "1.2.0",
+        "available": null,
+        "severity": "unknown",
+        "title": "examplelib 1.2.0: 1 known vulnerability",
+        "remediation": "No newer version in Homebrew yet. Follow the advisories, or uninstall the formula if nothing needs it.",
+        "command": null,
+        "url": "https://github.com/example/examplelib",
+        "advisories": [
+          {
+            "id": "CVE-2099-0003",
+            "severity": "unknown",
+            "summary": "Example loop",
+            "fixed": [
+              "5e821de8256d01780566b5c8ab7886fae4c93da8"
+            ],
+            "url": "https://osv.dev/vulnerability/CVE-2099-0003"
+          }
+        ]
+      }
+    ]
+  },
+  "issues": [
+    {
+      "number": 1,
+      "title": "[test-mac] openssl@3 3.6.3: 1 known vulnerability",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/openssl@3 -->\nold body",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        },
+        {
+          "name": "host:test-mac"
+        },
+        {
+          "name": "source:brew"
+        },
+        {
+          "name": "severity:low"
+        },
+        {
+          "name": "kind:vulnerability"
+        },
+        {
+          "name": "triaged"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "[test-mac] gone 1.0: 1 known vulnerability",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/gone -->\nbody",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "[test-mac] Some App 1.0: 1.1 is available",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/mas/123 -->\nbody",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "written by a person",
+      "body": "no marker here",
+      "labels": []
+    }
+  ]
+}
