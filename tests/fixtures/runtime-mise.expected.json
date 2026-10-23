@@ -1,0 +1,44 @@
+[
+  {
+    "advisories": [],
+    "available": "22.21.0",
+    "command": "mise upgrade node",
+    "id": "runtime/nodejs@22",
+    "installed": "22.3.0",
+    "kind": "update",
+    "package": "nodejs@22",
+    "remediation": "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains.",
+    "severity": "unknown",
+    "source": "runtime",
+    "title": "node (nodejs) 22.3.0: 22.21.0 is available in the 22 line",
+    "url": "https://endoflife.date/nodejs"
+  },
+  {
+    "advisories": [],
+    "available": "24.22.1",
+    "command": "asdf install nodejs 24.22.1",
+    "id": "runtime/nodejs@24",
+    "installed": "24.21.0",
+    "kind": "update",
+    "package": "nodejs@24",
+    "remediation": "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains.",
+    "severity": "unknown",
+    "source": "runtime",
+    "title": "nodejs 24.21.0: 24.22.1 is available in the 24 line",
+    "url": "https://endoflife.date/nodejs"
+  },
+  {
+    "advisories": [],
+    "available": null,
+    "command": null,
+    "id": "runtime/terraform@1.9",
+    "installed": "1.9.0",
+    "kind": "eol",
+    "package": "terraform@1.9",
+    "remediation": "Move to a supported release line. This one no longer receives security fixes.",
+    "severity": "high",
+    "source": "runtime",
+    "title": "aqua:hashicorp/terraform (terraform) 1.9.0: release line 1.9 reached end of life on 2025-12-31",
+    "url": "https://endoflife.date/terraform"
+  }
+]
