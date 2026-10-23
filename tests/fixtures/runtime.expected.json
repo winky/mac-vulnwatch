@@ -1,0 +1,44 @@
+[
+  {
+    "advisories": [],
+    "available": "24.22.1",
+    "command": "asdf install nodejs 24.22.1",
+    "id": "runtime/nodejs@24",
+    "installed": "24.21.0",
+    "kind": "update",
+    "package": "nodejs@24",
+    "remediation": "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains.",
+    "severity": "unknown",
+    "source": "runtime",
+    "title": "nodejs 24.21.0: 24.22.1 is available in the 24 line",
+    "url": "https://example.invalid/24"
+  },
+  {
+    "advisories": [],
+    "available": null,
+    "command": null,
+    "id": "runtime/nodejs@25",
+    "installed": "25.2.0",
+    "kind": "eol",
+    "package": "nodejs@25",
+    "remediation": "Move to a supported release line. This one no longer receives security fixes.",
+    "severity": "high",
+    "source": "runtime",
+    "title": "nodejs 25.2.0: release line 25 reached end of life on 2026-06-01",
+    "url": "https://endoflife.date/nodejs"
+  },
+  {
+    "advisories": [],
+    "available": "3.13.9",
+    "command": "asdf install python 3.13.9",
+    "id": "runtime/python@3.13",
+    "installed": "3.13.0rc1",
+    "kind": "update",
+    "package": "python@3.13",
+    "remediation": "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains.",
+    "severity": "unknown",
+    "source": "runtime",
+    "title": "python 3.13.0rc1: 3.13.9 is available in the 3.13 line",
+    "url": "https://endoflife.date/python"
+  }
+]

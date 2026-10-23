@@ -1,0 +1,19 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    # macOS, because the point is that the scripts run on the /bin/bash 3.2 that ships with it.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install shellcheck
+        run: brew install shellcheck
+      - name: shellcheck
+        run: make lint
+      - name: Tests
+        run: make test

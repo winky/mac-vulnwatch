@@ -1,0 +1,57 @@
+[
+  {
+    "advisories": [
+      {
+        "fixed": [
+          "3.6.5"
+        ],
+        "id": "CVE-2099-0001",
+        "severity": "high",
+        "summary": "Example overflow in the | parser",
+        "url": "https://osv.dev/vulnerability/CVE-2099-0001"
+      },
+      {
+        "fixed": [],
+        "id": "CVE-2099-0002",
+        "severity": "low",
+        "summary": "Example timing leak",
+        "url": "https://osv.dev/vulnerability/CVE-2099-0002"
+      }
+    ],
+    "available": "3.6.5",
+    "command": "brew upgrade openssl@3",
+    "id": "brew/openssl@3",
+    "installed": "3.6.4",
+    "kind": "vulnerability",
+    "package": "openssl@3",
+    "remediation": "Upgrade to 3.6.5. A newer release does not always carry the fix, so check the advisories.",
+    "severity": "high",
+    "source": "brew",
+    "title": "openssl@3 3.6.4: 2 known vulnerabilities",
+    "url": "https://github.com/openssl/openssl"
+  },
+  {
+    "advisories": [
+      {
+        "fixed": [
+          "5e821de8256d01780566b5c8ab7886fae4c93da8"
+        ],
+        "id": "CVE-2099-0003",
+        "severity": "unknown",
+        "summary": "Example loop",
+        "url": "https://osv.dev/vulnerability/CVE-2099-0003"
+      }
+    ],
+    "available": null,
+    "command": null,
+    "id": "brew/examplelib",
+    "installed": "1.2.0",
+    "kind": "vulnerability",
+    "package": "examplelib",
+    "remediation": "No newer version in Homebrew yet. Follow the advisories, or uninstall the formula if nothing needs it.",
+    "severity": "unknown",
+    "source": "brew",
+    "title": "examplelib 1.2.0: 1 known vulnerability",
+    "url": "https://github.com/example/examplelib"
+  }
+]
