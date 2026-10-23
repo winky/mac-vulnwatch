@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # collectors/runtime.sh
-# Tools installed through asdf, checked against endoflife.date.
+# Tools installed through asdf or mise, checked against endoflife.date.
 #
-# Any asdf plugin that names an endoflife.date product (or one of its aliases) is checked:
+# Any tool that names an endoflife.date product (or one of its aliases) is checked:
 # nodejs, python, ruby, golang, terraform, kubectl, java and so on. The mapping lives in
 # lib/runtime.jq. Two things are reported, per product and release line (nodejs 24, python 3.12):
 #
@@ -14,8 +14,9 @@
 # an upgrade are not what runs, and reporting each of them would make every upgrade look
 # unfinished.
 #
-# Skipped when asdf is not installed. Tools installed by Homebrew are covered by the brew
-# collector instead.
+# Both managers are read when both are installed, and a tool installed through both is one
+# finding: findings are keyed by product. Skipped when neither is installed. Tools installed by
+# Homebrew are covered by the brew collector instead.
 #
 #   collectors/runtime.sh            scan this machine
 #   collectors/runtime.sh --parse    read {"index", "installs", "products"} on stdin instead
@@ -76,7 +77,10 @@ parse() {
            severity: "unknown",
            title: "\($name) \(.version): \($line.latest.name) is available in the \($line.name) line",
            remediation: "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains.",
-           command: "asdf install \(.tool) \($line.latest.name)",
+           # mise upgrade moves within the requested range and switches to it; asdf only
+           # installs, and switching stays with the user (asdf set) since it may be per project.
+           command: (if .manager == "mise" then "mise upgrade \(.tool)"
+                     else "asdf install \(.tool) \($line.latest.name)" end),
            url: ($line.latest.link // "https://endoflife.date/\(.product)"),
            advisories: []
          }
@@ -85,7 +89,12 @@ parse() {
 
 # Prints [{manager, tool, version}] for everything asdf has installed.
 asdf_installs() {
-  local plugin version
+  local plugin version plugins
+  # Failing here is a failure, not "nothing installed": an empty list would close every issue.
+  plugins="$(asdf plugin list 2> /dev/null)" || {
+    log "asdf plugin list failed."
+    return 1
+  }
   while IFS= read -r plugin; do
     [ -n "${plugin}" ] || continue
     # `asdf list nodejs` prints one version per line, the current one marked with *.
@@ -94,7 +103,19 @@ asdf_installs() {
       [ -n "${version}" ] || continue
       jq -nc --arg tool "${plugin}" --arg version "${version}" '{manager: "asdf", tool: $tool, version: $version}'
     done < <(asdf list "${plugin}" 2> /dev/null || true)
-  done < <(asdf plugin list 2> /dev/null || true)
+  done <<< "${plugins}"
+}
+
+# Prints [{manager, tool, version}] for everything mise has installed, whether or not any
+# configuration asks for it -- the scan runs from launchd, outside every project.
+mise_installs() {
+  local listing
+  listing="$(mise ls --installed --json 2> /dev/null)" || {
+    log "mise ls failed."
+    return 1
+  }
+  jq -c 'to_entries[] | .key as $tool | .value[] | select(.installed != false)
+         | {manager: "mise", tool: $tool, version}' <<< "${listing}"
 }
 
 fetch() {
@@ -103,7 +124,14 @@ fetch() {
   # shellcheck disable=SC2064 # expand now: work is local and gone by the time EXIT fires
   trap "rm -rf '${work}'" EXIT
 
-  asdf_installs | jq -s . > "${work}/installs.json"
+  : > "${work}/installs.jsonl"
+  if command -v asdf > /dev/null 2>&1; then
+    asdf_installs >> "${work}/installs.jsonl" || exit 1
+  fi
+  if command -v mise > /dev/null 2>&1; then
+    mise_installs >> "${work}/installs.jsonl" || exit 1
+  fi
+  jq -s . "${work}/installs.jsonl" > "${work}/installs.json"
 
   if ! curl -fsS --max-time 30 "${ENDOFLIFE_API}" > "${work}/index-response.json"; then
     log "Could not reach endoflife.date."
@@ -134,8 +162,8 @@ case "${1:-}" in
     parse
     ;;
   "")
-    if ! command -v asdf > /dev/null 2>&1; then
-      log "asdf is not installed."
+    if ! command -v asdf > /dev/null 2>&1 && ! command -v mise > /dev/null 2>&1; then
+      log "Neither asdf nor mise is installed."
       exit "${EXIT_NOT_APPLICABLE}"
     fi
     fetch | parse
