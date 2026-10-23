@@ -19,9 +19,15 @@ AI もサービスもアカウントも不要。手元にあるツールの上�
 | `cask` | `brew outdated --cask` | 新しい版があるアプリ | Homebrew |
 | `mas` | `mas outdated` | 更新がある App Store アプリ | [mas](https://github.com/mas-cli/mas) |
 | `runtime` | asdf / mise ＋ endoflife.date | EOL の系列にあるもの、系列の最新パッチより古いもの。endoflife.date が知っているツールすべて（nodejs, python, go, terraform, kubectl, java など） | asdf か mise |
+| `packages` | npm -g、pipx、uv tool、pip --user、Go バイナリ、cargo ＋ OSV.dev | 既知の脆弱性を含むグローバルに入れたツール（依存も含む） | いずれか |
 | `docker` | `trivy image` | HIGH/CRITICAL の脆弱性があるローカルイメージ（既定で無効） | trivy、起動中の Docker |
 
-ツールが入っていないコレクタは「失敗」ではなく「スキップ」になる。
+ツールが入っていないコレクタは「失敗」ではなく「スキップ」になる。プロジェクトの依存（リポジトリの
+lockfile）は対象外で、GitHub の Dependabot が既に見ている。
+
+`packages` はインストールしたツールごとに1件で、その中の脆弱なパッケージをすべて並べる。アップグレード
+できる単位がツールだからである。npm は PATH 上の Node.js のものを読む。asdf や mise ならグローバルに
+選ばれているバージョン。
 
 検出は3種類。**vulnerability** は既知のアドバイザリがある。**eol** はもうセキュリティ修正が
 出ない。**update** は新しい版があるが、セキュリティ修正を含むかは情報源が言っていない。cask・

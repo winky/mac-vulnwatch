@@ -1,0 +1,28 @@
+{
+  "inventory": [
+    {"manager": "npm", "via": "example-cli", "via_version": "2.0.0", "command": "npm install -g example-cli@latest", "ecosystem": "npm", "name": "example-cli", "version": "2.0.0"},
+    {"manager": "npm", "via": "example-cli", "via_version": "2.0.0", "command": "npm install -g example-cli@latest", "ecosystem": "npm", "name": "semver", "version": "7.5.1"},
+    {"manager": "npm", "via": "other-cli", "via_version": "1.0.0", "command": "npm install -g other-cli@latest", "ecosystem": "npm", "name": "semver", "version": "7.5.1"},
+    {"manager": "npm", "via": "clean-cli", "via_version": "1.0.0", "command": "npm install -g clean-cli@latest", "ecosystem": "npm", "name": "clean-cli", "version": "1.0.0"},
+    {"manager": "go", "via": "local-tool", "via_version": "go1.22.1", "command": null, "ecosystem": "Go", "name": "stdlib", "version": "1.22.1"},
+    {"manager": "pipx", "via": "httpie", "via_version": "3.2.0", "command": "pipx upgrade httpie", "ecosystem": "PyPI", "name": "urllib3", "version": "1.26.0"}
+  ],
+  "results": [
+    {"ecosystem": "npm", "name": "example-cli", "version": "2.0.0", "ids": []},
+    {"ecosystem": "npm", "name": "semver", "version": "7.5.1", "ids": ["GHSA-0000-semv-er00"]},
+    {"ecosystem": "npm", "name": "clean-cli", "version": "1.0.0", "ids": []},
+    {"ecosystem": "Go", "name": "stdlib", "version": "1.22.1", "ids": ["GO-2099-0001"]},
+    {"ecosystem": "PyPI", "name": "urllib3", "version": "1.26.0", "ids": ["GHSA-0000-urll-ib30", "GHSA-0000-urll-ib31"]}
+  ],
+  "vulns": {
+    "GHSA-0000-semv-er00": {"id": "GHSA-0000-semv-er00", "summary": "semver ReDoS", "database_specific": {"severity": "HIGH"},
+      "affected": [{"package": {"name": "semver", "ecosystem": "npm"}, "ranges": [{"type": "SEMVER", "events": [{"introduced": "7.0.0"}, {"fixed": "7.5.2"}]}]},
+                   {"package": {"name": "semver", "ecosystem": "npm"}, "ranges": [{"type": "SEMVER", "events": [{"introduced": "6.0.0"}, {"fixed": "6.3.1"}]}]}]},
+    "GO-2099-0001": {"id": "GO-2099-0001", "details": "Example net/http issue in the standard library",
+      "affected": [{"package": {"name": "stdlib", "ecosystem": "Go"}, "ranges": [{"type": "SEMVER", "events": [{"introduced": "0"}, {"fixed": "1.22.2"}]}]}]},
+    "GHSA-0000-urll-ib30": {"id": "GHSA-0000-urll-ib30", "summary": "urllib3 header leak", "database_specific": {"severity": "MODERATE"},
+      "affected": [{"package": {"name": "urllib3", "ecosystem": "PyPI"}, "ranges": [{"type": "ECOSYSTEM", "events": [{"introduced": "0"}, {"fixed": "1.26.18"}]}]}]},
+    "GHSA-0000-urll-ib31": {"id": "GHSA-0000-urll-ib31", "summary": "urllib3 redirect issue", "database_specific": {"severity": "LOW"},
+      "affected": [{"package": {"name": "urllib3", "ecosystem": "PyPI"}, "ranges": [{"type": "ECOSYSTEM", "events": [{"introduced": "0"}, {"fixed": "1.26.19"}]}]}]}
+  }
+}

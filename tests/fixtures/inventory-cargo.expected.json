@@ -1,0 +1,20 @@
+[
+  {
+    "command": "cargo install cargo-edit",
+    "ecosystem": "crates.io",
+    "manager": "cargo",
+    "name": "cargo-edit",
+    "version": "0.12.2",
+    "via": "cargo-edit",
+    "via_version": "0.12.2"
+  },
+  {
+    "command": "cargo install ripgrep",
+    "ecosystem": "crates.io",
+    "manager": "cargo",
+    "name": "ripgrep",
+    "version": "14.1.0",
+    "via": "ripgrep",
+    "via_version": "14.1.0"
+  }
+]

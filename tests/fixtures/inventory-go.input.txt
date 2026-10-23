@@ -1,0 +1,10 @@
+/Users/me/go/bin/gopls: go1.22.1
+	path	golang.org/x/tools/gopls
+	mod	golang.org/x/tools/gopls	v0.15.2	h1:abc=
+	dep	golang.org/x/mod	v0.16.0	h1:def=
+	dep	example.com/old	v1.0.0	h1:ghi=
+	=>	example.com/fork	v1.0.1	h1:jkl=
+	build	-compiler=gc
+/Users/me/go/bin/local-tool: go1.24.0
+	path	command-line-arguments
+	mod	command-line-arguments	(devel)	

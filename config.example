@@ -12,8 +12,8 @@
 #HOST=mac-mini
 
 # Which collectors to run, space or comma separated.
-# Available: macos brew cask mas runtime docker (docker is off by default; it needs trivy).
-#COLLECTORS=macos brew cask mas runtime
+# Available: macos brew cask mas runtime packages docker (docker is off by default; it needs trivy).
+#COLLECTORS=macos brew cask mas runtime packages
 
 # Show a macOS notification when a scan finds something it did not find last time.
 #NOTIFY=true

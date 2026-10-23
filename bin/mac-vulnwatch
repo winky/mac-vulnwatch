@@ -43,7 +43,7 @@ Options:
   --version          Print the version
   -h, --help         Show this help
 
-Collectors: macos brew cask mas runtime docker
+Collectors: macos brew cask mas runtime packages docker
 Config:     ${MAC_VULNWATCH_CONFIG}
 EOF
 }
@@ -97,7 +97,7 @@ command -v jq > /dev/null 2>&1 || die "jq is required (brew install jq)"
 STATE_DIR="$(config_get STATE_DIR "${XDG_STATE_HOME:-${HOME}/.local/state}/mac-vulnwatch")"
 STATE_DIR="${STATE_DIR/#\~/${HOME}}"
 REPO="$(config_get GITHUB_REPO "")"
-COLLECTORS="$(config_get COLLECTORS "macos brew cask mas runtime")"
+COLLECTORS="$(config_get COLLECTORS "macos brew cask mas runtime packages")"
 [ -n "${ONLY}" ] && COLLECTORS="${ONLY}"
 # The host name ends up in labels and titles, so keep it to characters that read well in both.
 HOST="$(config_get HOST "$(scutil --get LocalHostName 2> /dev/null || hostname -s)" \

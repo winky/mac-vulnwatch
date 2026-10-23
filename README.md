@@ -28,9 +28,15 @@ vulnerability data comes from public databases ([OSV.dev](https://osv.dev),
 | `cask` | `brew outdated --cask` | Apps with a newer version | Homebrew |
 | `mas` | `mas outdated` | App Store apps with an update | [mas](https://github.com/mas-cli/mas) |
 | `runtime` | asdf / mise + endoflife.date | Tools on an end-of-life line, or behind their line's latest patch: anything endoflife.date knows (nodejs, python, go, terraform, kubectl, java, ...) | asdf or mise |
+| `packages` | npm -g, pipx, uv tools, pip --user, Go binaries, cargo + OSV.dev | Globally installed tools carrying known vulnerabilities, including their dependencies | any of those |
 | `docker` | `trivy image` | Local images with HIGH/CRITICAL vulnerabilities (off by default) | trivy, a running Docker |
 
-A collector whose tool is not installed is skipped, not failed.
+A collector whose tool is not installed is skipped, not failed. Project dependencies (lockfiles in
+your repositories) are out of scope: GitHub's Dependabot already covers them.
+
+`packages` reports one finding per installed tool, listing every vulnerable package inside it,
+because the tool is what you can upgrade. npm is read for the Node.js on PATH; with asdf or mise
+that is the globally selected version.
 
 Findings come in three kinds. **vulnerability** has a known advisory. **eol** means the
 software no longer receives security fixes. **update** means a newer version exists but the
