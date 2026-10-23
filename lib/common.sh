@@ -6,6 +6,7 @@
 # Everything here has to run on the bash that ships with macOS, which is 3.2: no associative
 # arrays, no mapfile, no ${var,,}, and an empty array cannot be expanded under `set -u`.
 
+# shellcheck disable=SC2034 # read by bin/mac-vulnwatch, which sources this file
 MAC_VULNWATCH_VERSION="0.1.0"
 
 log() {
@@ -19,6 +20,7 @@ die() {
 
 # A collector exits with this when it does not apply to the machine (the tool it needs is not
 # installed). That is not a failure: it is reported as "skipped", and nothing it owns is closed.
+# shellcheck disable=SC2034 # read by the collectors and bin/mac-vulnwatch
 EXIT_NOT_APPLICABLE=3
 
 # config_get KEY DEFAULT
