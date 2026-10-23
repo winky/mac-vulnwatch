@@ -1,0 +1,4 @@
+{"installs": {
+  "ripgrep 14.1.0 (registry+https://github.com/rust-lang/crates.io-index)": {"bins": ["rg"]},
+  "cargo-edit 0.12.2 (registry+https://github.com/rust-lang/crates.io-index)": {"bins": ["cargo-add"]}
+}}

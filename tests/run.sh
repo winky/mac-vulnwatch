@@ -49,6 +49,20 @@ for input in "${FIXTURES}"/*.input.*; do
   check "${name}" "${WORK}/${name}.json"
 done
 
+# The inventory functions in lib/packages.jq, against inventory-<kind>.input.*: a .txt fixture
+# is raw text (go version -m), anything else JSON.
+for input in "${FIXTURES}"/inventory-*.input.*; do
+  name="$(basename "${input}")"
+  name="${name%%.input.*}"
+  kind="${name#inventory-}"
+  case "${input}" in
+    *.txt) raw=(-R -s) ;;
+    *) raw=() ;;
+  esac
+  jq ${raw[@]+"${raw[@]}"} -L "${ROOT}/lib" "include \"packages\"; [${kind}_inventory]" "${input}" > "${WORK}/${name}.json"
+  check "${name}" "${WORK}/${name}.json"
+done
+
 # The sync planner.
 jq -L "${ROOT}/lib" -f "${ROOT}/lib/sync.jq" "${FIXTURES}/sync.input.json" > "${WORK}/sync.json"
 check sync "${WORK}/sync.json"

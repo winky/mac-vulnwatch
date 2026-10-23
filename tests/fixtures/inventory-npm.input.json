@@ -1,0 +1,14 @@
+{
+  "name": "lib",
+  "dependencies": {
+    "corepack": {"version": "0.34.0"},
+    "example-cli": {
+      "version": "2.0.0",
+      "dependencies": {
+        "semver": {"version": "7.5.1"},
+        "glob": {"version": "10.0.0", "dependencies": {"brace-expansion": {"version": "2.0.1"}}},
+        "missing-peer": {"missing": true}
+      }
+    }
+  }
+}

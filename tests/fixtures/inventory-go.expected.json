@@ -1,0 +1,47 @@
+[
+  {
+    "command": "go install golang.org/x/tools/gopls@latest",
+    "ecosystem": "Go",
+    "manager": "go",
+    "name": "stdlib",
+    "version": "1.22.1",
+    "via": "gopls",
+    "via_version": "v0.15.2"
+  },
+  {
+    "command": "go install golang.org/x/tools/gopls@latest",
+    "ecosystem": "Go",
+    "manager": "go",
+    "name": "golang.org/x/tools/gopls",
+    "version": "0.15.2",
+    "via": "gopls",
+    "via_version": "v0.15.2"
+  },
+  {
+    "command": "go install golang.org/x/tools/gopls@latest",
+    "ecosystem": "Go",
+    "manager": "go",
+    "name": "golang.org/x/mod",
+    "version": "0.16.0",
+    "via": "gopls",
+    "via_version": "v0.15.2"
+  },
+  {
+    "command": "go install golang.org/x/tools/gopls@latest",
+    "ecosystem": "Go",
+    "manager": "go",
+    "name": "example.com/fork",
+    "version": "1.0.1",
+    "via": "gopls",
+    "via_version": "v0.15.2"
+  },
+  {
+    "command": null,
+    "ecosystem": "Go",
+    "manager": "go",
+    "name": "stdlib",
+    "version": "1.24.0",
+    "via": "local-tool",
+    "via_version": "(devel)"
+  }
+]
