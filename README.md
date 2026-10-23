@@ -27,7 +27,7 @@ vulnerability data comes from public databases ([OSV.dev](https://osv.dev),
 | `brew` | `brew vulns` (OSV.dev) | Formulae with known vulnerabilities, and whether an upgrade exists | Homebrew with `brew vulns` |
 | `cask` | `brew outdated --cask` | Apps with a newer version | Homebrew |
 | `mas` | `mas outdated` | App Store apps with an update | [mas](https://github.com/mas-cli/mas) |
-| `runtime` | asdf + endoflife.date | Runtimes on an end-of-life line, or behind their line's latest patch | asdf |
+| `runtime` | asdf + endoflife.date | Tools on an end-of-life line, or behind their line's latest patch: any asdf plugin endoflife.date knows (nodejs, python, golang, terraform, kubectl, java, ...) | asdf |
 | `docker` | `trivy image` | Local images with HIGH/CRITICAL vulnerabilities (off by default) | trivy, a running Docker |
 
 A collector whose tool is not installed is skipped, not failed.
