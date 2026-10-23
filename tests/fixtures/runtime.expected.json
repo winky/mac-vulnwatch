@@ -1,6 +1,48 @@
 [
   {
     "advisories": [],
+    "available": null,
+    "command": null,
+    "id": "runtime/azul-zulu@17",
+    "installed": "17.44.53",
+    "kind": "eol",
+    "package": "azul-zulu@17",
+    "remediation": "Move to a supported release line. This one no longer receives security fixes.",
+    "severity": "high",
+    "source": "runtime",
+    "title": "java (azul-zulu) 17.44.53: release line 17 reached end of life on 2026-09-30",
+    "url": "https://endoflife.date/azul-zulu"
+  },
+  {
+    "advisories": [],
+    "available": null,
+    "command": null,
+    "id": "runtime/go@1.24",
+    "installed": "1.24.2",
+    "kind": "eol",
+    "package": "go@1.24",
+    "remediation": "Move to a supported release line. This one no longer receives security fixes.",
+    "severity": "high",
+    "source": "runtime",
+    "title": "golang (go) 1.24.2: release line 1.24 reached end of life on 2026-02-11",
+    "url": "https://endoflife.date/go"
+  },
+  {
+    "advisories": [],
+    "available": "1.36.5",
+    "command": "asdf install kubectl 1.36.5",
+    "id": "runtime/kubernetes@1.36",
+    "installed": "1.36.1",
+    "kind": "update",
+    "package": "kubernetes@1.36",
+    "remediation": "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains.",
+    "severity": "unknown",
+    "source": "runtime",
+    "title": "kubectl (kubernetes) 1.36.1: 1.36.5 is available in the 1.36 line",
+    "url": "https://endoflife.date/kubernetes"
+  },
+  {
+    "advisories": [],
     "available": "24.22.1",
     "command": "asdf install nodejs 24.22.1",
     "id": "runtime/nodejs@24",

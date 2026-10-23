@@ -18,7 +18,7 @@ AI もサービスもアカウントも不要。手元にあるツールの上�
 | `brew` | `brew vulns`（OSV.dev） | 既知の脆弱性がある formula と、アップグレード先の有無 | `brew vulns` がある Homebrew |
 | `cask` | `brew outdated --cask` | 新しい版があるアプリ | Homebrew |
 | `mas` | `mas outdated` | 更新がある App Store アプリ | [mas](https://github.com/mas-cli/mas) |
-| `runtime` | asdf ＋ endoflife.date | EOL の系列にあるランタイム、系列の最新パッチより古いランタイム | asdf |
+| `runtime` | asdf ＋ endoflife.date | EOL の系列にあるもの、系列の最新パッチより古いもの。endoflife.date が知っている asdf プラグインすべて（nodejs, python, golang, terraform, kubectl, java など） | asdf |
 | `docker` | `trivy image` | HIGH/CRITICAL の脆弱性があるローカルイメージ（既定で無効） | trivy、起動中の Docker |
 
 ツールが入っていないコレクタは「失敗」ではなく「スキップ」になる。
