@@ -7,8 +7,22 @@
         "tag": "openssl-3.6.4",
         "repo_url": "https://github.com/openssl/openssl",
         "vulnerabilities": [
-          {"id": "CVE-2099-0001", "severity": "HIGH", "summary": "Example overflow in the | parser", "aliases": [], "fixed_versions": ["3.6.5"]},
-          {"id": "CVE-2099-0002", "severity": "LOW", "summary": "Example timing leak", "aliases": [], "fixed_versions": []}
+          {
+            "id": "CVE-2099-0001",
+            "severity": "HIGH",
+            "summary": "Example overflow in the | parser",
+            "aliases": [],
+            "fixed_versions": [
+              "3.6.5"
+            ]
+          },
+          {
+            "id": "CVE-2099-0002",
+            "severity": "LOW",
+            "summary": "Example timing leak",
+            "aliases": [],
+            "fixed_versions": []
+          }
         ],
         "patched": []
       },
@@ -18,7 +32,15 @@
         "tag": "1.2.0",
         "repo_url": "https://github.com/example/examplelib",
         "vulnerabilities": [
-          {"id": "CVE-2099-0003", "severity": "UNKNOWN", "summary": "Example loop", "aliases": [], "fixed_versions": ["5e821de8256d01780566b5c8ab7886fae4c93da8"]}
+          {
+            "id": "CVE-2099-0003",
+            "severity": "UNKNOWN",
+            "summary": "Example loop",
+            "aliases": [],
+            "fixed_versions": [
+              "5e821de8256d01780566b5c8ab7886fae4c93da8"
+            ]
+          }
         ],
         "patched": []
       }
@@ -27,9 +49,26 @@
   },
   "outdated": {
     "formulae": [
-      {"name": "openssl@3", "installed_versions": ["3.6.4"], "current_version": "3.6.5", "pinned": false, "pinned_version": null},
-      {"name": "unrelated", "installed_versions": ["1.0"], "current_version": "1.1", "pinned": false, "pinned_version": null}
+      {
+        "name": "openssl@3",
+        "installed_versions": [
+          "3.6.4"
+        ],
+        "current_version": "3.6.5",
+        "pinned": false,
+        "pinned_version": null
+      },
+      {
+        "name": "unrelated",
+        "installed_versions": [
+          "1.0"
+        ],
+        "current_version": "1.1",
+        "pinned": false,
+        "pinned_version": null
+      }
     ],
     "casks": []
-  }
+  },
+  "installed": "openssl@3 3.6.4_1\nexamplelib 1.2.0\nunrelated 1.0 0.9\n"
 }

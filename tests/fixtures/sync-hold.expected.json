@@ -1,0 +1,35 @@
+[
+  {
+    "add_labels": [],
+    "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/openssl@3 -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Source | `brew` |\n| Package | `openssl@3` |\n| Installed | `3.6.4` |\n| Available | `3.6.5` |\n| Severity | high |\n| Kind | vulnerability |\n| Reference | https://github.com/openssl/openssl |\n\n### Remediation\n\nUpgrade to 3.6.5. A newer release does not always carry the fix, so check the advisories.\n\n```sh\nbrew upgrade openssl@3\n```\n\n### Advisories\n\n| ID | Severity | Summary | Fixed in |\n|---|---|---|---|\n| [CVE-2099-0001](https://osv.dev/vulnerability/CVE-2099-0001) | high | Example overflow in the \\| parser | 3.6.5 |\n| [CVE-2099-0002](https://osv.dev/vulnerability/CVE-2099-0002) | low | Example timing leak |  |\n\n---\nReported by [mac-vulnwatch](https://github.com/winky/mac-vulnwatch). Closed automatically once a scan no longer finds it.\n",
+    "number": 15,
+    "op": "update",
+    "remove_labels": [
+      "needs-review"
+    ],
+    "title": "[test-mac] openssl@3 3.6.4: 2 known vulnerabilities"
+  },
+  {
+    "add_labels": [
+      "needs-review"
+    ],
+    "comment": "No longer reported by the scan at 2099-01-02T00:00:00Z, but `9.0.2` is still installed on `test-mac`, so this stays open.\n\nNothing changed on the machine; the advisory data did. That can mean an advisory was withdrawn or corrected, or that the source stopped matching it. Check the advisories above, and close this by hand if the version is not affected. It closes by itself once the software is updated or removed.",
+    "number": 10,
+    "op": "hold"
+  },
+  {
+    "comment": "No longer found on `test-mac` by the scan at 2099-01-02T00:00:00Z, so closing: the installed version changed from `1.0`. If it is found again, a new issue is opened.",
+    "number": 12,
+    "op": "close"
+  },
+  {
+    "comment": "No longer found on `test-mac` by the scan at 2099-01-02T00:00:00Z, so closing: it is no longer installed. If it is found again, a new issue is opened.",
+    "number": 13,
+    "op": "close"
+  },
+  {
+    "comment": "No longer found on `test-mac` by the scan at 2099-01-02T00:00:00Z, so closing: either the software was updated or removed, or the advisory data changed. If it is found again, a new issue is opened.",
+    "number": 14,
+    "op": "close"
+  }
+]

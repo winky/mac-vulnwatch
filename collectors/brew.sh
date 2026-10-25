@@ -7,8 +7,11 @@
 # merely outdated is not reported: most upgrades are not security fixes, and reporting all of
 # them would bury the ones that are.
 #
+# Also reports every installed formula and version as the inventory, so that a formula brew vulns
+# stops reporting while it is still installed at the same version is not mistaken for fixed.
+#
 #   collectors/brew.sh            scan this machine
-#   collectors/brew.sh --parse    read {"vulns": ..., "outdated": ...} on stdin instead
+#   collectors/brew.sh --parse    read {"vulns", "outdated", "installed"} on stdin instead
 #
 set -euo pipefail
 
@@ -20,7 +23,7 @@ parse() {
   jq -L "${ROOT}/lib" '
     include "findings";
     ((.outdated.formulae // []) | map({key: .name, value: .current_version}) | from_entries) as $available
-    | [.vulns.findings[]
+    | {findings: [.vulns.findings[]
        | (.vulnerabilities | length) as $count
        | $available[.formula] as $newer
        | {
@@ -45,7 +48,12 @@ parse() {
              fixed: (.fixed_versions // []),
              url: "https://osv.dev/vulnerability/\(.id)"
            }]
-         }]'
+         }],
+       # brew list prints "name 1.2.3_1 1.2.2". The revision (_1) is dropped: brew vulns reports
+       # versions without it, and that is what an issue records as installed.
+       inventory: ((.installed // "") | split("\n") | map(select(length > 0) | split(" "))
+                   | map({key: "brew/\(.[0])", value: (.[1:] | map(sub("_[0-9]+$"; "")) | unique)})
+                   | from_entries)}'
 }
 
 fetch() {
@@ -67,8 +75,14 @@ fetch() {
     exit 1
   fi
 
+  if ! brew list --formula --versions > "${work}/installed.txt" 2> "${work}/installed.err"; then
+    log "brew list failed: $(tail -n 3 "${work}/installed.err")"
+    exit 1
+  fi
+
   jq -n --slurpfile vulns "${work}/vulns.json" --slurpfile outdated "${work}/outdated.json" \
-    '{vulns: $vulns[0], outdated: $outdated[0]}'
+    --rawfile installed "${work}/installed.txt" \
+    '{vulns: $vulns[0], outdated: $outdated[0], installed: $installed}'
 }
 
 case "${1:-}" in

@@ -1,109 +1,128 @@
-[
-  {
-    "advisories": [
-      {
-        "fixed": [
-          "1.22.2"
-        ],
-        "id": "GO-2099-0001",
-        "severity": "unknown",
-        "summary": "stdlib 1.22.1: Example net/http issue in the standard library",
-        "url": "https://osv.dev/vulnerability/GO-2099-0001"
-      }
+{
+  "findings": [
+    {
+      "advisories": [
+        {
+          "fixed": [
+            "1.22.2"
+          ],
+          "id": "GO-2099-0001",
+          "severity": "unknown",
+          "summary": "stdlib 1.22.1: Example net/http issue in the standard library",
+          "url": "https://osv.dev/vulnerability/GO-2099-0001"
+        }
+      ],
+      "available": null,
+      "command": null,
+      "id": "packages/go/local-tool",
+      "installed": "go1.22.1",
+      "kind": "vulnerability",
+      "package": "local-tool",
+      "remediation": "Rebuild local-tool with current dependencies and toolchain.",
+      "severity": "unknown",
+      "source": "packages",
+      "title": "local-tool (go): 1 known vulnerability in stdlib 1.22.1",
+      "url": null
+    },
+    {
+      "advisories": [
+        {
+          "fixed": [
+            "6.3.1",
+            "7.5.2"
+          ],
+          "id": "GHSA-0000-semv-er00",
+          "severity": "high",
+          "summary": "semver 7.5.1: semver ReDoS",
+          "url": "https://osv.dev/vulnerability/GHSA-0000-semv-er00"
+        }
+      ],
+      "available": null,
+      "command": "npm install -g example-cli@latest",
+      "id": "packages/npm/example-cli",
+      "installed": "2.0.0",
+      "kind": "vulnerability",
+      "package": "example-cli",
+      "remediation": "Upgrade example-cli. If the newest release still carries the vulnerable package, the fix has to come from its maintainers.",
+      "severity": "high",
+      "source": "packages",
+      "title": "example-cli (npm): 1 known vulnerability in semver 7.5.1",
+      "url": null
+    },
+    {
+      "advisories": [
+        {
+          "fixed": [
+            "6.3.1",
+            "7.5.2"
+          ],
+          "id": "GHSA-0000-semv-er00",
+          "severity": "high",
+          "summary": "semver 7.5.1: semver ReDoS",
+          "url": "https://osv.dev/vulnerability/GHSA-0000-semv-er00"
+        }
+      ],
+      "available": null,
+      "command": "npm install -g other-cli@latest",
+      "id": "packages/npm/other-cli",
+      "installed": "1.0.0",
+      "kind": "vulnerability",
+      "package": "other-cli",
+      "remediation": "Upgrade other-cli. If the newest release still carries the vulnerable package, the fix has to come from its maintainers.",
+      "severity": "high",
+      "source": "packages",
+      "title": "other-cli (npm): 1 known vulnerability in semver 7.5.1",
+      "url": null
+    },
+    {
+      "advisories": [
+        {
+          "fixed": [
+            "1.26.18"
+          ],
+          "id": "GHSA-0000-urll-ib30",
+          "severity": "medium",
+          "summary": "urllib3 1.26.0: urllib3 header leak",
+          "url": "https://osv.dev/vulnerability/GHSA-0000-urll-ib30"
+        },
+        {
+          "fixed": [
+            "1.26.19"
+          ],
+          "id": "GHSA-0000-urll-ib31",
+          "severity": "low",
+          "summary": "urllib3 1.26.0: urllib3 redirect issue",
+          "url": "https://osv.dev/vulnerability/GHSA-0000-urll-ib31"
+        }
+      ],
+      "available": null,
+      "command": "pipx upgrade httpie",
+      "id": "packages/pipx/httpie",
+      "installed": "3.2.0",
+      "kind": "vulnerability",
+      "package": "httpie",
+      "remediation": "Upgrade httpie. If the newest release still carries the vulnerable package, the fix has to come from its maintainers.",
+      "severity": "medium",
+      "source": "packages",
+      "title": "httpie (pipx): 2 known vulnerabilities in urllib3 1.26.0",
+      "url": null
+    }
+  ],
+  "inventory": {
+    "packages/go/local-tool": [
+      "go1.22.1"
     ],
-    "available": null,
-    "command": null,
-    "id": "packages/go/local-tool",
-    "installed": "go1.22.1",
-    "kind": "vulnerability",
-    "package": "local-tool",
-    "remediation": "Rebuild local-tool with current dependencies and toolchain.",
-    "severity": "unknown",
-    "source": "packages",
-    "title": "local-tool (go): 1 known vulnerability in stdlib 1.22.1",
-    "url": null
-  },
-  {
-    "advisories": [
-      {
-        "fixed": [
-          "6.3.1",
-          "7.5.2"
-        ],
-        "id": "GHSA-0000-semv-er00",
-        "severity": "high",
-        "summary": "semver 7.5.1: semver ReDoS",
-        "url": "https://osv.dev/vulnerability/GHSA-0000-semv-er00"
-      }
+    "packages/npm/clean-cli": [
+      "1.0.0"
     ],
-    "available": null,
-    "command": "npm install -g example-cli@latest",
-    "id": "packages/npm/example-cli",
-    "installed": "2.0.0",
-    "kind": "vulnerability",
-    "package": "example-cli",
-    "remediation": "Upgrade example-cli. If the newest release still carries the vulnerable package, the fix has to come from its maintainers.",
-    "severity": "high",
-    "source": "packages",
-    "title": "example-cli (npm): 1 known vulnerability in semver 7.5.1",
-    "url": null
-  },
-  {
-    "advisories": [
-      {
-        "fixed": [
-          "6.3.1",
-          "7.5.2"
-        ],
-        "id": "GHSA-0000-semv-er00",
-        "severity": "high",
-        "summary": "semver 7.5.1: semver ReDoS",
-        "url": "https://osv.dev/vulnerability/GHSA-0000-semv-er00"
-      }
+    "packages/npm/example-cli": [
+      "2.0.0"
     ],
-    "available": null,
-    "command": "npm install -g other-cli@latest",
-    "id": "packages/npm/other-cli",
-    "installed": "1.0.0",
-    "kind": "vulnerability",
-    "package": "other-cli",
-    "remediation": "Upgrade other-cli. If the newest release still carries the vulnerable package, the fix has to come from its maintainers.",
-    "severity": "high",
-    "source": "packages",
-    "title": "other-cli (npm): 1 known vulnerability in semver 7.5.1",
-    "url": null
-  },
-  {
-    "advisories": [
-      {
-        "fixed": [
-          "1.26.18"
-        ],
-        "id": "GHSA-0000-urll-ib30",
-        "severity": "medium",
-        "summary": "urllib3 1.26.0: urllib3 header leak",
-        "url": "https://osv.dev/vulnerability/GHSA-0000-urll-ib30"
-      },
-      {
-        "fixed": [
-          "1.26.19"
-        ],
-        "id": "GHSA-0000-urll-ib31",
-        "severity": "low",
-        "summary": "urllib3 1.26.0: urllib3 redirect issue",
-        "url": "https://osv.dev/vulnerability/GHSA-0000-urll-ib31"
-      }
+    "packages/npm/other-cli": [
+      "1.0.0"
     ],
-    "available": null,
-    "command": "pipx upgrade httpie",
-    "id": "packages/pipx/httpie",
-    "installed": "3.2.0",
-    "kind": "vulnerability",
-    "package": "httpie",
-    "remediation": "Upgrade httpie. If the newest release still carries the vulnerable package, the fix has to come from its maintainers.",
-    "severity": "medium",
-    "source": "packages",
-    "title": "httpie (pipx): 2 known vulnerabilities in urllib3 1.26.0",
-    "url": null
+    "packages/pipx/httpie": [
+      "3.2.0"
+    ]
   }
-]
+}

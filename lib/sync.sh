@@ -15,6 +15,7 @@ label_color() {
     kind:vulnerability) echo 5319e7 ;;
     kind:eol) echo 000000 ;;
     mac-vulnwatch) echo 1d76db ;;
+    needs-review) echo fbca04 ;;
     *) echo ededed ;;
   esac
 }
@@ -87,6 +88,14 @@ sync_apply() {
         if jq -j .body <<< "${action}" | gh issue edit "${number}" --repo "${repo}" \
           --title "$(jq -r .title <<< "${action}")" --body-file - ${args[@]+"${args[@]}"} > /dev/null; then
           echo "updated  #${number} $(jq -r .title <<< "${action}")"
+        else
+          failed=1
+        fi
+        ;;
+      hold)
+        if gh issue edit "${number}" --repo "${repo}" --add-label "$(jq -r '.add_labels[0]' <<< "${action}")" > /dev/null \
+          && gh issue comment "${number}" --repo "${repo}" --body "$(jq -r .comment <<< "${action}")" > /dev/null; then
+          echo "held     #${number}"
         else
           failed=1
         fi
