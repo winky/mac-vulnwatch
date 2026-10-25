@@ -81,8 +81,8 @@ optional.
 ### GitHub issues
 
 ```sh
-gh repo create your-name/machine-vulns --private
-echo 'GITHUB_REPO=your-name/machine-vulns' >> ~/.config/mac-vulnwatch/config
+gh repo create your-name/vuln-findings --private
+echo 'GITHUB_REPO=your-name/vuln-findings' >> ~/.config/mac-vulnwatch/config
 mac-vulnwatch --dry-run   # shows "would open ..." for each issue
 ```
 

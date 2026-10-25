@@ -69,8 +69,8 @@ LaunchAgent として、ログイン中のあなたの権限で動く。予定�
 ### GitHub Issue
 
 ```sh
-gh repo create your-name/machine-vulns --private
-echo 'GITHUB_REPO=your-name/machine-vulns' >> ~/.config/mac-vulnwatch/config
+gh repo create your-name/vuln-findings --private
+echo 'GITHUB_REPO=your-name/vuln-findings' >> ~/.config/mac-vulnwatch/config
 mac-vulnwatch --dry-run   # 起票される Issue が "would open ..." として出る
 ```
 

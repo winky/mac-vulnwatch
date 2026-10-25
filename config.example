@@ -6,7 +6,7 @@
 # Mirror findings as issues in this repository (owner/name). Use a private repository: the
 # issues list what is installed on your machine. Leave empty to keep reports local only.
 # Needs the gh CLI, logged in (gh auth login).
-#GITHUB_REPO=your-name/machine-vulns
+#GITHUB_REPO=your-name/vuln-findings
 
 # What to call this machine in issue titles and labels. Defaults to the LocalHostName.
 #HOST=mac-mini
