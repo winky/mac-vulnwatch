@@ -17,3 +17,32 @@ jobs:
         run: make lint
       - name: Tests
         run: make test
+
+  formula:
+    # Installs the formula from this checkout, the way a user would from the tap, and runs its
+    # test. The runner is disposable, so adding a local tap costs nothing.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      # Named like a release tarball: Homebrew reads the version from the URL.
+      - name: Render the formula against this checkout
+        run: |
+          version="$(sed -n 's/^MAC_VULNWATCH_VERSION="\(.*\)"$/\1/p' lib/common.sh)"
+          git archive --format=tar.gz --prefix="mac-vulnwatch-${version}/" -o "${RUNNER_TEMP}/mac-vulnwatch-${version}.tar.gz" HEAD
+          sha256="$(shasum -a 256 "${RUNNER_TEMP}/mac-vulnwatch-${version}.tar.gz" | cut -d ' ' -f 1)"
+          sed -e "s/@VERSION@/${version}/g" -e "s/@SHA256@/${sha256}/g" \
+              -e "s|^  url .*|  url \"file://${RUNNER_TEMP}/mac-vulnwatch-${version}.tar.gz\"|" \
+            packaging/mac-vulnwatch.rb.in > "${RUNNER_TEMP}/mac-vulnwatch.rb"
+          ruby -c "${RUNNER_TEMP}/mac-vulnwatch.rb"
+      - name: Install from a local tap
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_INSTALL_FROM_API: 1
+        run: |
+          brew tap-new --no-git local/ci
+          cp "${RUNNER_TEMP}/mac-vulnwatch.rb" "$(brew --repository)/Library/Taps/local/homebrew-ci/Formula/"
+          brew install --build-from-source local/ci/mac-vulnwatch
+          brew test local/ci/mac-vulnwatch
+          mac-vulnwatch --version
+      - name: Show the LaunchAgent brew services would install
+        run: brew ruby -e 'puts Formula["local/ci/mac-vulnwatch"].service.to_plist'

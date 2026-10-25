@@ -40,27 +40,35 @@ App Store・macOS の更新はこれにしかなりえない。
 
 ## インストール
 
-必要なもの: macOS、`jq`。GitHub Issue を使うなら `gh`。
+必要なもの: macOS。GitHub Issue を使うなら `gh`。
+
+### Homebrew で入れる
 
 ```sh
-git clone https://github.com/winky/mac-vulnwatch.git
-cd mac-vulnwatch
-make link              # 任意: ~/.local/bin に mac-vulnwatch を置く
+brew install winky/tap/mac-vulnwatch
 mac-vulnwatch --dry-run
+brew services start mac-vulnwatch   # 毎日 09:00 にスキャン
 ```
 
 `--dry-run` はスキャンしてレポートを出すが、何も保存せず GitHub にも触れない。
 
-毎日動かすには:
+更新は `brew upgrade` で。毎日のスキャンは LaunchAgent として、ログイン中のあなたの権限で動く。
+09:00 にスリープしていれば復帰時に動く。出力は `$(brew --prefix)/var/log/mac-vulnwatch.log`。
+
+### clone して使う
+
+別の時刻に動かしたい場合や、手を入れる場合:
 
 ```sh
-make install                   # 毎日 09:00
-make install HOUR=7 MINUTE=30  # 時刻を変える
+git clone https://github.com/winky/mac-vulnwatch.git
+cd mac-vulnwatch
+make link                      # 任意: ~/.local/bin に mac-vulnwatch を置く
+make install HOUR=7 MINUTE=30  # 毎日 07:30 にスキャン（既定は 09:00）
 make status
 ```
 
-LaunchAgent として、ログイン中のあなたの権限で動く。予定時刻にスリープしていれば復帰時に動く。
-出力は `~/Library/Logs/mac-vulnwatch/mac-vulnwatch.log`。
+`jq` が必要。出力は `~/Library/Logs/mac-vulnwatch/mac-vulnwatch.log`。どちらか一方だけを使うこと。
+両方入れると1日に2回スキャンする。
 
 ## 設定
 
