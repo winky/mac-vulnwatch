@@ -8,20 +8,29 @@
 
 # Tool names that are neither a product name nor one of its aliases.
 def product_overrides:
-  {"kubectl": "kubernetes"};
+  {"kubectl": "kubernetes", "kubernetes-cli": "kubernetes"};
 
 def product_for($name; $index):
   product_overrides[$name]
   // ([$index[] | select(.name == $name or ((.aliases // []) | index($name)))][0].name);
 
 # mise can name a tool by backend, e.g. aqua:hashicorp/terraform or core:node. What follows the
-# backend and the last slash is the name endoflife.date would know.
+# backend and the last slash is the name endoflife.date would know. A Homebrew versioned formula
+# (python@3.14, postgresql@16) names the product before the @.
 def tool_name:
-  sub("^[a-z0-9-]+:"; "") | split("/") | last;
+  sub("^[a-z0-9-]+:"; "") | split("/") | last | sub("@.*$"; "");
 
-# {manager, tool, version} -> the same with "product" and a normalised "version" added, plus
-# "eol_only" when the version cannot be compared with endoflife.date's. Nothing comes out for
-# a tool with no product, or a version that is not a version (system, latest, ref:..., path:...).
+# Homebrew appends a revision (3.14.0_1), and Java 8 still reports itself as 1.8.0_392. Neither
+# suffix is part of the version endoflife.date publishes.
+def normalise_version:
+  ltrimstr("v") | sub("\\+.*$"; "") | sub("_[0-9]+$"; "")
+  | if test("^1\\.[5-8]\\.") then ltrimstr("1.") else . end;
+
+# {manager, tool, version} -> the same with "product", a normalised "version" for matching and
+# "shown_version" as the install reported it (1.8.0_392, not 8.0) for people, plus
+# "eol_only" when the version cannot be compared with endoflife.date's (or the install said so
+# itself, as Homebrew's do). Nothing comes out for a tool with no product, or a version that is
+# not a version (system, latest, ref:..., path:...).
 def resolve($index):
   . as $install
   | ($install.version | ltrimstr("v")) as $raw
@@ -35,10 +44,12 @@ def resolve($index):
       | select($parts != null)
       | product_for($parts.vendor; $index) as $product
       | select($product != null)
-      | $install + {product: $product, version: ($parts.version | sub("\\+.*$"; "")), eol_only: true}
+      | $install + {product: $product, version: ($parts.version | normalise_version),
+                    shown_version: $parts.version, eol_only: true}
     else
       select($raw | test("^[0-9]"))
       | product_for($tool; $index) as $product
       | select($product != null)
-      | $install + {product: $product, version: ($raw | sub("\\+.*$"; "")), eol_only: false}
+      | $install + {product: $product, version: ($raw | normalise_version),
+                    shown_version: $raw, eol_only: ($install.eol_only // false)}
     end;

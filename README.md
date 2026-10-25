@@ -27,7 +27,7 @@ vulnerability data comes from public databases ([OSV.dev](https://osv.dev),
 | `brew` | `brew vulns` (OSV.dev) | Formulae with known vulnerabilities, and whether an upgrade exists | Homebrew with `brew vulns` |
 | `cask` | `brew outdated --cask` | Apps with a newer version | Homebrew |
 | `mas` | `mas outdated` | App Store apps with an update | [mas](https://github.com/mas-cli/mas) |
-| `runtime` | asdf / mise + endoflife.date | Tools on an end-of-life line, or behind their line's latest patch: anything endoflife.date knows (nodejs, python, go, terraform, kubectl, java, ...) | asdf or mise |
+| `runtime` | asdf, mise, Homebrew, vendor installers + endoflife.date | Languages and tools on an end-of-life line, or behind their line's latest patch: anything endoflife.date knows (nodejs, python, go, terraform, kubectl, postgresql, java, rust, ...) | any of those |
 | `packages` | npm -g, pipx, uv tools, pip --user, Go binaries, cargo + OSV.dev | Globally installed tools carrying known vulnerabilities, including their dependencies | any of those |
 | `docker` | `trivy image` | Local images with HIGH/CRITICAL vulnerabilities (off by default) | trivy, a running Docker |
 
@@ -37,6 +37,11 @@ your repositories) are out of scope: GitHub's Dependabot already covers them.
 `packages` reports one finding per installed tool, listing every vulnerable package inside it,
 because the tool is what you can upgrade. npm is read for the Node.js on PATH; with asdf or mise
 that is the globally selected version.
+
+`runtime` reads every way a language is commonly installed: asdf, mise, Homebrew (formulae you
+installed yourself, end of life only), python.org, go.dev, nodejs.org, JDK installers and
+rustup's stable toolchain. The interpreters Apple ships (`/usr/bin/ruby`, `perl`, `python3`) are
+left out on purpose: only Apple can update them, and the `macos` collector reports when it does.
 
 Findings come in three kinds. **vulnerability** has a known advisory. **eol** means the
 software no longer receives security fixes. **update** means a newer version exists but the

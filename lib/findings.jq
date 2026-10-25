@@ -23,7 +23,9 @@
 #
 # Include this from a program (jq -f, or a filter on the command line), never from another
 # module. jq 1.8.2 aborts with "Unknown function type" when a module included by a module calls
-# one of its own functions, and most functions here do.
+# one of its own functions, and most functions here do. Only 1.8.2 is affected: it registers
+# libraries in the reverse of their dependency order (jqlang/jq#3597, #3636), fixed by
+# jqlang/jq#3620 after 1.8.2 was released. Nesting becomes safe once 1.8.2 is no longer in use.
 
 def severity_rank:
   (ascii_downcase) as $s

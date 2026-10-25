@@ -18,7 +18,7 @@ AI もサービスもアカウントも不要。手元にあるツールの上�
 | `brew` | `brew vulns`（OSV.dev） | 既知の脆弱性がある formula と、アップグレード先の有無 | `brew vulns` がある Homebrew |
 | `cask` | `brew outdated --cask` | 新しい版があるアプリ | Homebrew |
 | `mas` | `mas outdated` | 更新がある App Store アプリ | [mas](https://github.com/mas-cli/mas) |
-| `runtime` | asdf / mise ＋ endoflife.date | EOL の系列にあるもの、系列の最新パッチより古いもの。endoflife.date が知っているツールすべて（nodejs, python, go, terraform, kubectl, java など） | asdf か mise |
+| `runtime` | asdf、mise、Homebrew、公式インストーラ ＋ endoflife.date | EOL の系列にある言語やツール、系列の最新パッチより古いもの。endoflife.date が知っているものすべて（nodejs, python, go, terraform, kubectl, postgresql, java, rust など） | いずれか |
 | `packages` | npm -g、pipx、uv tool、pip --user、Go バイナリ、cargo ＋ OSV.dev | 既知の脆弱性を含むグローバルに入れたツール（依存も含む） | いずれか |
 | `docker` | `trivy image` | HIGH/CRITICAL の脆弱性があるローカルイメージ（既定で無効） | trivy、起動中の Docker |
 
@@ -28,6 +28,11 @@ lockfile）は対象外で、GitHub の Dependabot が既に見ている。
 `packages` はインストールしたツールごとに1件で、その中の脆弱なパッケージをすべて並べる。アップグレード
 できる単位がツールだからである。npm は PATH 上の Node.js のものを読む。asdf や mise ならグローバルに
 選ばれているバージョン。
+
+`runtime` は言語の一般的な入れ方をすべて読む。asdf、mise、Homebrew（自分で入れた formula のみ、EOL 判定
+のみ）、python.org、go.dev、nodejs.org、JDK のインストーラ、rustup の stable。Apple が同梱するもの
+（`/usr/bin/ruby`、`perl`、`python3`）は意図的に対象外にしている。更新できるのは Apple だけで、更新が
+出れば `macos` コレクタが報告する。
 
 検出は3種類。**vulnerability** は既知のアドバイザリがある。**eol** はもうセキュリティ修正が
 出ない。**update** は新しい版があるが、セキュリティ修正を含むかは情報源が言っていない。cask・

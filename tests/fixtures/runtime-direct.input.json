@@ -1,0 +1,27 @@
+{
+  "index": [
+    {"name": "python", "aliases": []},
+    {"name": "postgresql", "aliases": ["postgres", "pg"]},
+    {"name": "kubernetes", "aliases": ["k8s"]},
+    {"name": "rust", "aliases": ["rustlang"]},
+    {"name": "oracle-jdk", "aliases": ["oracle-java"]},
+    {"name": "go", "aliases": ["golang"]}
+  ],
+  "installs": [
+    {"manager": "brew", "tool": "postgresql@14", "version": "14.13_1", "eol_only": true, "command": null, "hint": "Install a newer versioned formula (brew search postgresql) and move to it."},
+    {"manager": "brew", "tool": "python@3.13", "version": "3.13.1", "eol_only": true, "command": null, "hint": "brew hint"},
+    {"manager": "brew", "tool": "kubernetes-cli", "version": "1.36.1", "eol_only": true, "command": null, "hint": "brew hint"},
+    {"manager": "python.org", "tool": "python", "version": "3.13.0", "command": null, "hint": "Download the installer from https://www.python.org/downloads/macos/."},
+    {"manager": "go.dev", "tool": "go", "version": "1.24.1", "command": null, "hint": "Download the installer from https://go.dev/dl/."},
+    {"manager": "jdk", "tool": "java", "version": "oracle-java-1.8.0_392", "command": null, "hint": "Download a current release from Oracle Corporation."},
+    {"manager": "rustup", "tool": "rust", "version": "1.80.0", "command": "rustup update stable", "eol_command": "rustup update stable", "hint": null}
+  ],
+  "products": {
+    "python": [{"name": "3.13", "isEol": false, "eolFrom": "2029-10-31", "latest": {"name": "3.13.9", "link": null}}],
+    "postgresql": [{"name": "14", "isEol": true, "eolFrom": "2026-11-12", "latest": {"name": "14.20", "link": null}}],
+    "kubernetes": [{"name": "1.36", "isEol": false, "eolFrom": "2027-06-28", "latest": {"name": "1.36.5", "link": null}}],
+    "rust": [{"name": "1.80", "isEol": true, "eolFrom": "2024-09-05", "latest": {"name": "1.80.1", "link": null}}],
+    "oracle-jdk": [{"name": "8", "isEol": true, "eolFrom": "2022-03-31", "latest": {"name": "8u471", "link": null}}],
+    "go": [{"name": "1.24", "isEol": false, "eolFrom": "2026-08-12", "latest": {"name": "1.24.13", "link": null}}]
+  }
+}
