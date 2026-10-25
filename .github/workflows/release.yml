@@ -1,0 +1,59 @@
+name: Release
+
+# Pushing a v* tag publishes a GitHub release and updates the formula in winky/homebrew-tap,
+# the same flow envguard uses through GoReleaser. GoReleaser builds Go binaries; this is a set
+# of shell scripts, so the source tarball is the artifact and the steps are spelled out.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # The version is written in lib/common.sh and printed by --version. A tag that disagrees
+      # would ship a formula whose test reports another version, so stop before publishing.
+      - name: Check the tag matches the version in the code
+        run: |
+          code="$(sed -n 's/^MAC_VULNWATCH_VERSION="\(.*\)"$/\1/p' lib/common.sh)"
+          if [ "v${code}" != "${GITHUB_REF_NAME}" ]; then
+            echo "The tag is ${GITHUB_REF_NAME} but lib/common.sh says ${code}." >&2
+            exit 1
+          fi
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${GITHUB_REF_NAME}" --verify-tag --generate-notes
+
+      # GitHub generates the tarball on request; its checksum is stable for a given tag.
+      - name: Render the formula
+        run: |
+          url="https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz"
+          sha256="$(curl -fsSL "${url}" | sha256sum | cut -d ' ' -f 1)"
+          sed -e "s/@VERSION@/${GITHUB_REF_NAME#v}/g" -e "s/@SHA256@/${sha256}/g" \
+            packaging/mac-vulnwatch.rb.in > mac-vulnwatch.rb
+          ruby -c mac-vulnwatch.rb
+
+      - uses: actions/checkout@v5
+        with:
+          repository: winky/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          path: tap
+
+      # Same commit message as GoReleaser writes for envguard, so the tap's history reads alike.
+      - name: Push the formula to the tap
+        run: |
+          cp mac-vulnwatch.rb tap/mac-vulnwatch.rb
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mac-vulnwatch.rb
+          git commit -m "Brew formula update for mac-vulnwatch version ${GITHUB_REF_NAME}"
+          git push

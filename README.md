@@ -50,28 +50,36 @@ macOS updates can only ever be this.
 
 ## Install
 
-Requirements: macOS, `jq`. For GitHub issues, `gh`.
+Requirements: macOS. For GitHub issues, `gh`.
+
+### With Homebrew
 
 ```sh
-git clone https://github.com/winky/mac-vulnwatch.git
-cd mac-vulnwatch
-make link              # optional: puts mac-vulnwatch in ~/.local/bin
+brew install winky/tap/mac-vulnwatch
 mac-vulnwatch --dry-run
+brew services start mac-vulnwatch   # scan every day at 09:00
 ```
 
 `--dry-run` scans and prints the report but saves nothing and touches nothing on GitHub.
 
-To run daily:
+`brew upgrade` keeps it current. The daily scan runs as a LaunchAgent, i.e. as you, while you
+are logged in; if the Mac is asleep at 09:00 it runs when it wakes. Output goes to
+`$(brew --prefix)/var/log/mac-vulnwatch.log`.
+
+### From a clone
+
+For another time of day, or to work on it:
 
 ```sh
-make install                   # 09:00 every day
-make install HOUR=7 MINUTE=30  # or another time
+git clone https://github.com/winky/mac-vulnwatch.git
+cd mac-vulnwatch
+make link                      # optional: puts mac-vulnwatch in ~/.local/bin
+make install HOUR=7 MINUTE=30  # scan daily at 07:30 (default 09:00)
 make status
 ```
 
-The scan runs as a LaunchAgent, i.e. as you, while you are logged in. If the Mac is asleep at
-the scheduled time, it runs when it wakes. Output goes to
-`~/Library/Logs/mac-vulnwatch/mac-vulnwatch.log`.
+Needs `jq`. Output goes to `~/Library/Logs/mac-vulnwatch/mac-vulnwatch.log`. Use one or the
+other: both installed means two scans a day.
 
 ## Configure
 

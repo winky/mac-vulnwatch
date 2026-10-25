@@ -1,0 +1,54 @@
+# typed: false
+# frozen_string_literal: true
+
+# Generated from packaging/mac-vulnwatch.rb.in in winky/mac-vulnwatch by its release workflow.
+# Edit the template there, not this file.
+class MacVulnwatch < Formula
+  desc "Dependabot for your Mac: daily scan for unpatched software"
+  homepage "https://github.com/winky/mac-vulnwatch"
+  url "https://github.com/winky/mac-vulnwatch/archive/refs/tags/v@VERSION@.tar.gz"
+  sha256 "@SHA256@"
+  license "MIT"
+  head "https://github.com/winky/mac-vulnwatch.git", branch: "main"
+
+  depends_on :macos
+  depends_on "jq"
+
+  def install
+    # The entry point finds lib/ and collectors/ next to itself through the symlink.
+    libexec.install "bin", "collectors", "lib", "config.example"
+    bin.install_symlink libexec/"bin/mac-vulnwatch"
+  end
+
+  def caveats
+    <<~EOS
+      To scan every day at 09:00:
+        brew services start mac-vulnwatch
+
+      To mirror findings as GitHub issues, put GITHUB_REPO=<owner>/<private repo> in
+        ~/.config/mac-vulnwatch/config
+      and log in with `gh auth login`. Every setting is described in
+        #{opt_libexec}/config.example
+    EOS
+  end
+
+  service do
+    run opt_bin/"mac-vulnwatch"
+    run_type :cron
+    cron "0 9 * * *"
+    # launchd reads no shell startup files. Beyond Homebrew's own PATH, the asdf and mise shims
+    # and ~/.local/bin, so that npm and the runtimes resolve as they do in a shell.
+    environment_variables PATH: [
+      "#{HOMEBREW_PREFIX}/bin", "#{HOMEBREW_PREFIX}/sbin",
+      "#{Dir.home}/.local/bin", "#{Dir.home}/.asdf/shims", "#{Dir.home}/.local/share/mise/shims",
+      "/usr/bin", "/bin", "/usr/sbin", "/sbin"
+    ].join(":")
+    log_path var/"log/mac-vulnwatch.log"
+    error_log_path var/"log/mac-vulnwatch.log"
+  end
+
+  test do
+    assert_match "mac-vulnwatch", shell_output("#{bin}/mac-vulnwatch --version")
+    assert_match "Usage: mac-vulnwatch", shell_output("#{bin}/mac-vulnwatch --help")
+  end
+end
