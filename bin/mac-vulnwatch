@@ -126,7 +126,11 @@ for collector in $(printf '%s' "${COLLECTORS}" | tr ',' ' '); do
   status=$?
   set -e
 
-  if [ "${status}" -eq 0 ] && jq -e 'type == "array"' "${WORK}/${collector}.json" > /dev/null 2>&1; then
+  # A collector prints its findings as an array, or as {"findings": [...], "inventory": {...}}
+  # when it can also say what it checked: finding id -> installed version, for everything it
+  # looked at. The inventory is what tells "fixed" apart from "no longer reported".
+  if [ "${status}" -eq 0 ] && jq -e 'type == "array" or (.findings | type == "array")' \
+    "${WORK}/${collector}.json" > /dev/null 2>&1; then
     sources="$(jq -c --arg c "${collector}" '. + {($c): {status: "ok"}}' <<< "${sources}")"
     echo "${WORK}/${collector}.json" >> "${WORK}/collected.list"
   elif [ "${status}" -eq "${EXIT_NOT_APPLICABLE}" ]; then
@@ -144,9 +148,13 @@ done
 
 # xargs would run jq with no files at all when nothing was collected, so handle that apart.
 if [ -s "${WORK}/collected.list" ]; then
-  tr '\n' '\0' < "${WORK}/collected.list" | xargs -0 jq -s 'add' > "${WORK}/findings.json"
+  tr '\n' '\0' < "${WORK}/collected.list" \
+    | xargs -0 jq -s 'map(if type == "array" then . else .findings end) | add' > "${WORK}/findings.json"
+  tr '\n' '\0' < "${WORK}/collected.list" \
+    | xargs -0 jq -s 'map(if type == "array" then {} else (.inventory // {}) end) | add' > "${WORK}/inventory.json"
 else
   echo '[]' > "${WORK}/findings.json"
+  echo '{}' > "${WORK}/inventory.json"
 fi
 
 jq -n \
@@ -155,7 +163,9 @@ jq -n \
   --arg version "${MAC_VULNWATCH_VERSION}" \
   --argjson sources "${sources}" \
   --slurpfile findings "${WORK}/findings.json" \
-  '{host: $host, scanned_at: $scanned_at, version: $version, sources: $sources, findings: $findings[0]}' \
+  --slurpfile inventory "${WORK}/inventory.json" \
+  '{host: $host, scanned_at: $scanned_at, version: $version, sources: $sources,
+    findings: $findings[0], inventory: $inventory[0]}' \
   > "${WORK}/report.json"
 
 jq -r -L "${ROOT}/lib" 'include "findings"; report_markdown' "${WORK}/report.json" > "${WORK}/report.md"
@@ -198,6 +208,7 @@ if [ "${SYNC}" = true ] && [ -n "${REPO}" ]; then
   elif [ "${DRY_RUN}" = true ]; then
     jq -r '.[] | if .op == "create" then "would open    \(.title)"
                  elif .op == "update" then "would update  #\(.number) \(.title)"
+                 elif .op == "hold" then "would hold    #\(.number) (no longer reported, version unchanged)"
                  else "would close   #\(.number)" end' <<< "${plan}" >&2
     [ "$(jq length <<< "${plan}")" -gt 0 ] || log "GitHub issues are up to date."
   else

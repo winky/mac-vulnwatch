@@ -63,9 +63,12 @@ for input in "${FIXTURES}"/inventory-*.input.*; do
   check "${name}" "${WORK}/${name}.json"
 done
 
-# The sync planner.
-jq -L "${ROOT}/lib" -f "${ROOT}/lib/sync.jq" "${FIXTURES}/sync.input.json" > "${WORK}/sync.json"
-check sync "${WORK}/sync.json"
+# The sync planner, against every sync*.input.json.
+for input in "${FIXTURES}"/sync*.input.json; do
+  name="$(basename "${input}" .input.json)"
+  jq -L "${ROOT}/lib" -f "${ROOT}/lib/sync.jq" "${input}" > "${WORK}/${name}.json"
+  check "${name}" "${WORK}/${name}.json"
+done
 
 # Applying a plan and planning again must produce nothing: otherwise every daily run would edit
 # every issue. Build the issues a create would have made, and plan against them.
@@ -97,7 +100,7 @@ else
 fi
 
 # The Markdown report renders, and escapes a | inside a summary.
-jq -n --slurpfile findings <(bash "${ROOT}/collectors/brew.sh" --parse < "${FIXTURES}/brew.input.json") '
+jq -n --slurpfile findings <(bash "${ROOT}/collectors/brew.sh" --parse < "${FIXTURES}/brew.input.json" | jq '.findings') '
   {host: "test-mac", scanned_at: "2099-01-01T00:00:00Z", version: "0.0.0",
    sources: {brew: {status: "ok"}, mas: {status: "skipped", error: "mas is not installed"}},
    findings: $findings[0]}' > "${WORK}/report.json"

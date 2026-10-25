@@ -1,0 +1,141 @@
+{
+  "host": "test-mac",
+  "report": {
+    "scanned_at": "2099-01-02T00:00:00Z",
+    "sources": {
+      "brew": {
+        "status": "ok"
+      },
+      "cask": {
+        "status": "ok"
+      }
+    },
+    "findings": [
+      {
+        "id": "brew/openssl@3",
+        "source": "brew",
+        "kind": "vulnerability",
+        "package": "openssl@3",
+        "installed": "3.6.4",
+        "available": "3.6.5",
+        "severity": "high",
+        "title": "openssl@3 3.6.4: 2 known vulnerabilities",
+        "remediation": "Upgrade to 3.6.5. A newer release does not always carry the fix, so check the advisories.",
+        "command": "brew upgrade openssl@3",
+        "url": "https://github.com/openssl/openssl",
+        "advisories": [
+          {
+            "id": "CVE-2099-0001",
+            "severity": "high",
+            "summary": "Example overflow in the | parser",
+            "fixed": [
+              "3.6.5"
+            ],
+            "url": "https://osv.dev/vulnerability/CVE-2099-0001"
+          },
+          {
+            "id": "CVE-2099-0002",
+            "severity": "low",
+            "summary": "Example timing leak",
+            "fixed": [],
+            "url": "https://osv.dev/vulnerability/CVE-2099-0002"
+          }
+        ]
+      }
+    ],
+    "inventory": {
+      "brew/openssl@3": [
+        "3.6.4"
+      ],
+      "brew/ffmpeg": [
+        "9.0.2"
+      ],
+      "brew/reviewed": [
+        "1.0"
+      ],
+      "brew/upgraded": [
+        "1.1"
+      ]
+    }
+  },
+  "issues": [
+    {
+      "number": 10,
+      "title": "unchanged software, data changed",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/ffmpeg -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Installed | `9.0.2` |\n",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "already held",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/reviewed -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Installed | `1.0` |\n",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        },
+        {
+          "name": "needs-review"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "upgraded",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/upgraded -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Installed | `1.0` |\n",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "uninstalled",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/removed -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Installed | `2.0` |\n",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "source without inventory",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/cask/some-app -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Installed | `1.0` |\n",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "reported again after being held",
+      "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/openssl@3 -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Installed | `3.6.4` |\n",
+      "labels": [
+        {
+          "name": "mac-vulnwatch"
+        },
+        {
+          "name": "host:test-mac"
+        },
+        {
+          "name": "source:brew"
+        },
+        {
+          "name": "severity:high"
+        },
+        {
+          "name": "kind:vulnerability"
+        },
+        {
+          "name": "needs-review"
+        }
+      ]
+    }
+  ]
+}
