@@ -25,6 +25,11 @@ def issue_fingerprint:
 def fingerprint_source:
   split("/")[1];
 
+# A body as GitHub hands it back is not byte-for-byte what was sent: trailing newlines and line
+# endings drift. Compare what a reader would see.
+def comparable_body:
+  gsub("\r\n"; "\n") | sub("\\s+$"; "");
+
 . as $in
 | $in.host as $host
 | ($in.issues | map(select(issue_fingerprint != null) | {key: issue_fingerprint, value: .}) | from_entries) as $open
@@ -44,7 +49,7 @@ def fingerprint_source:
          # Only labels this tool owns are compared: anything a person added stays.
          | ([$have[] | select(test("^(severity|kind|source):"))] - $labels) as $remove
          | ($labels - $have) as $add
-         | if $issue.title != $title or ($issue.body | rtrimstr("\n")) != ($body | rtrimstr("\n"))
+         | if $issue.title != $title or (($issue.body // "") | comparable_body) != ($body | comparable_body)
               or ($add | length) > 0 or ($remove | length) > 0
            then {op: "update", number: $issue.number, title: $title, body: $body,
                  add_labels: $add, remove_labels: $remove}
@@ -59,5 +64,7 @@ def fingerprint_source:
      | select($current[.key] == null)
      | select(($in.report.sources[.key | fingerprint_source].status // "") == "ok")
      | {op: "close", number: .value.number,
-        comment: "No longer found on `\($host)` by the scan at \($in.report.scanned_at). Closing."}]
+        comment: ("No longer found on `\($host)` by the scan at \($in.report.scanned_at), so closing.\n\n"
+          + "Either the software was updated or removed, or the advisory data changed (an advisory "
+          + "withdrawn or its affected versions revised). If it is found again, a new issue is opened.")}]
   )

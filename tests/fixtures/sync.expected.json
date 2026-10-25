@@ -24,7 +24,7 @@
     "title": "[test-mac] examplelib 1.2.0: 1 known vulnerability"
   },
   {
-    "comment": "No longer found on `test-mac` by the scan at 2099-01-01T00:00:00Z. Closing.",
+    "comment": "No longer found on `test-mac` by the scan at 2099-01-01T00:00:00Z, so closing.\n\nEither the software was updated or removed, or the advisory data changed (an advisory withdrawn or its affected versions revised). If it is found again, a new issue is opened.",
     "number": 2,
     "op": "close"
   }
