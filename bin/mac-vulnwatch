@@ -1,0 +1,228 @@
+#!/bin/bash
+#
+# bin/mac-vulnwatch
+# Scan this Mac for unpatched software, keep a local report, and mirror the findings as GitHub
+# issues that close themselves once fixed.
+#
+# Run it by hand, or daily through the LaunchAgent that `make install` places.
+#
+set -euo pipefail
+
+# Follow symlinks so that a link to this file from somewhere on PATH still finds lib/ and
+# collectors/. readlink -f is missing from macOS before 12.3.
+source_path="${BASH_SOURCE[0]}"
+while [ -L "${source_path}" ]; do
+  link_dir="$(cd -P "$(dirname "${source_path}")" && pwd)"
+  source_path="$(readlink "${source_path}")"
+  case "${source_path}" in
+    /*) ;;
+    *) source_path="${link_dir}/${source_path}" ;;
+  esac
+done
+ROOT="$(cd -P "$(dirname "${source_path}")/.." && pwd)"
+
+MAC_VULNWATCH_CONFIG="${MAC_VULNWATCH_CONFIG:-${XDG_CONFIG_HOME:-${HOME}/.config}/mac-vulnwatch/config}"
+# shellcheck source=lib/common.sh
+. "${ROOT}/lib/common.sh"
+# shellcheck source=lib/sync.sh
+. "${ROOT}/lib/sync.sh"
+
+usage() {
+  cat << EOF
+Usage: mac-vulnwatch [options]
+
+Scan this Mac for unpatched software and report what needs attention.
+
+Options:
+  --dry-run          Scan and show what would change on GitHub; change and save nothing
+  --no-sync          Leave GitHub issues alone
+  --no-notify        Do not show a notification for new findings
+  --format FORMAT    What to print: md (default) or json
+  --only LIST        Run only these collectors, comma separated (e.g. brew,mas);
+                     the saved report is left as it was
+  --version          Print the version
+  -h, --help         Show this help
+
+Collectors: macos brew cask mas runtime docker
+Config:     ${MAC_VULNWATCH_CONFIG}
+EOF
+}
+
+DRY_RUN=false
+SYNC=true
+NOTIFY=true
+FORMAT=md
+ONLY=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run) DRY_RUN=true ;;
+    --no-sync) SYNC=false ;;
+    --no-notify) NOTIFY=false ;;
+    --format)
+      [ $# -ge 2 ] || die "--format needs a value"
+      FORMAT="$2"
+      shift
+      ;;
+    --format=*) FORMAT="${1#--format=}" ;;
+    --only)
+      [ $# -ge 2 ] || die "--only needs a value"
+      ONLY="$2"
+      shift
+      ;;
+    --only=*) ONLY="${1#--only=}" ;;
+    --version)
+      echo "mac-vulnwatch ${MAC_VULNWATCH_VERSION}"
+      exit 0
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+case "${FORMAT}" in
+  md | json) ;;
+  *) die "unknown format: ${FORMAT} (md or json)" ;;
+esac
+
+command -v jq > /dev/null 2>&1 || die "jq is required (brew install jq)"
+
+STATE_DIR="$(config_get STATE_DIR "${XDG_STATE_HOME:-${HOME}/.local/state}/mac-vulnwatch")"
+STATE_DIR="${STATE_DIR/#\~/${HOME}}"
+REPO="$(config_get GITHUB_REPO "")"
+COLLECTORS="$(config_get COLLECTORS "macos brew cask mas runtime")"
+[ -n "${ONLY}" ] && COLLECTORS="${ONLY}"
+# The host name ends up in labels and titles, so keep it to characters that read well in both.
+HOST="$(config_get HOST "$(scutil --get LocalHostName 2> /dev/null || hostname -s)" \
+  | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9.\n-' '-')"
+
+WORK="$(mktemp -d "${TMPDIR:-/tmp}/mac-vulnwatch.XXXXXX")"
+trap 'rm -rf "${WORK}"' EXIT
+
+# --- scan --------------------------------------------------------------------------------------
+
+sources="{}"
+failed=0
+: > "${WORK}/collected.list"
+
+for collector in $(printf '%s' "${COLLECTORS}" | tr ',' ' '); do
+  script="${ROOT}/collectors/${collector}.sh"
+  if [ ! -f "${script}" ]; then
+    sources="$(jq -c --arg c "${collector}" '. + {($c): {status: "failed", error: "no such collector"}}' <<< "${sources}")"
+    failed=1
+    continue
+  fi
+
+  log "scanning ${collector}"
+  set +e
+  bash "${script}" > "${WORK}/${collector}.json" 2> "${WORK}/${collector}.err"
+  status=$?
+  set -e
+
+  if [ "${status}" -eq 0 ] && jq -e 'type == "array"' "${WORK}/${collector}.json" > /dev/null 2>&1; then
+    sources="$(jq -c --arg c "${collector}" '. + {($c): {status: "ok"}}' <<< "${sources}")"
+    echo "${WORK}/${collector}.json" >> "${WORK}/collected.list"
+  elif [ "${status}" -eq "${EXIT_NOT_APPLICABLE}" ]; then
+    reason="$(tail -n 1 "${WORK}/${collector}.err")"
+    sources="$(jq -c --arg c "${collector}" --arg r "${reason:-not installed}" \
+      '. + {($c): {status: "skipped", error: $r}}' <<< "${sources}")"
+  else
+    error="$(tail -n 3 "${WORK}/${collector}.err")"
+    sources="$(jq -c --arg c "${collector}" --arg e "${error:-exited with ${status}}" \
+      '. + {($c): {status: "failed", error: $e}}' <<< "${sources}")"
+    log "  ${collector} failed: ${error:-exited with ${status}}"
+    failed=1
+  fi
+done
+
+# xargs would run jq with no files at all when nothing was collected, so handle that apart.
+if [ -s "${WORK}/collected.list" ]; then
+  tr '\n' '\0' < "${WORK}/collected.list" | xargs -0 jq -s 'add' > "${WORK}/findings.json"
+else
+  echo '[]' > "${WORK}/findings.json"
+fi
+
+jq -n \
+  --arg host "${HOST}" \
+  --arg scanned_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --arg version "${MAC_VULNWATCH_VERSION}" \
+  --argjson sources "${sources}" \
+  --slurpfile findings "${WORK}/findings.json" \
+  '{host: $host, scanned_at: $scanned_at, version: $version, sources: $sources, findings: $findings[0]}' \
+  > "${WORK}/report.json"
+
+jq -r -L "${ROOT}/lib" 'include "findings"; report_markdown' "${WORK}/report.json" > "${WORK}/report.md"
+
+if [ "${FORMAT}" = json ]; then
+  cat "${WORK}/report.json"
+else
+  cat "${WORK}/report.md"
+fi
+
+# --- what is new since the last scan ------------------------------------------------------------
+
+previous="${STATE_DIR}/latest.json"
+if [ -f "${previous}" ]; then
+  jq -c --slurpfile previous "${previous}" \
+    '($previous[0].findings | map(.id)) as $seen | [.findings[] | select(.id as $id | $seen | index($id) | not)]' \
+    "${WORK}/report.json" > "${WORK}/new.json"
+else
+  jq -c '.findings' "${WORK}/report.json" > "${WORK}/new.json"
+fi
+
+# A partial scan (--only) is not saved: the next full scan would see everything it left out as
+# new, and notify about it again.
+if [ "${DRY_RUN}" = false ] && [ -z "${ONLY}" ]; then
+  mkdir -p "${STATE_DIR}"
+  # Written next to the target and moved into place, so a reader never sees half a report.
+  cp "${WORK}/report.json" "${STATE_DIR}/latest.json.tmp" && mv "${STATE_DIR}/latest.json.tmp" "${STATE_DIR}/latest.json"
+  cp "${WORK}/report.md" "${STATE_DIR}/latest.md.tmp" && mv "${STATE_DIR}/latest.md.tmp" "${STATE_DIR}/latest.md"
+fi
+
+# --- GitHub issues -------------------------------------------------------------------------------
+
+if [ "${SYNC}" = true ] && [ -n "${REPO}" ]; then
+  if ! command -v gh > /dev/null 2>&1; then
+    log "GITHUB_REPO is set but gh is not installed (brew install gh), so issues were not synced."
+    failed=1
+  elif ! plan="$(sync_plan "${REPO}" "${HOST}" "${WORK}/report.json")"; then
+    log "Could not read the issues in ${REPO}; is gh logged in (gh auth status)?"
+    failed=1
+  elif [ "${DRY_RUN}" = true ]; then
+    jq -r '.[] | if .op == "create" then "would open    \(.title)"
+                 elif .op == "update" then "would update  #\(.number) \(.title)"
+                 else "would close   #\(.number)" end' <<< "${plan}" >&2
+    [ "$(jq length <<< "${plan}")" -gt 0 ] || log "GitHub issues are up to date."
+  else
+    sync_apply "${REPO}" "${plan}" >&2 || {
+      log "Some issue updates failed."
+      failed=1
+    }
+  fi
+fi
+
+# --- notification --------------------------------------------------------------------------------
+
+new_count="$(jq length "${WORK}/new.json")"
+if [ "${DRY_RUN}" = false ] && [ "${NOTIFY}" = true ] && config_true NOTIFY true \
+  && [ "${new_count}" -gt 0 ] && command -v osascript > /dev/null 2>&1; then
+  message="$(jq -r --arg repo "${REPO}" '
+    (map(select(.kind == "vulnerability" or .kind == "eol")) | length) as $serious
+    | "\(length) new finding\(if length == 1 then "" else "s" end)"
+      + (if $serious > 0 then " (\($serious) security)" else "" end)
+      + ": " + (map(.package) | .[:3] | join(", ")) + (if length > 3 then ", ..." else "" end)' \
+    "${WORK}/new.json")"
+  # Passed as an argument rather than spliced into the script, so a package name cannot break
+  # out of the AppleScript string.
+  osascript -e 'on run argv' -e 'display notification (item 1 of argv) with title "mac-vulnwatch"' -e 'end run' \
+    "${message}" > /dev/null 2>&1 || true
+fi
+
+exit "${failed}"

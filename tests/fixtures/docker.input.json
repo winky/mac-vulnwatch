@@ -1,0 +1,12 @@
+[
+  {"image": "example/app:latest", "report": {"Results": [
+    {"Target": "example/app:latest (debian 12)", "Vulnerabilities": [
+      {"VulnerabilityID": "CVE-2099-1000", "PkgName": "libexample", "InstalledVersion": "1.0", "FixedVersion": "1.1", "Severity": "CRITICAL", "Title": "Example RCE", "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2099-1000"},
+      {"VulnerabilityID": "CVE-2099-1001", "PkgName": "libother", "InstalledVersion": "2.0", "FixedVersion": "", "Severity": "HIGH", "Title": "Example DoS"}
+    ]},
+    {"Target": "app/package-lock.json", "Vulnerabilities": [
+      {"VulnerabilityID": "CVE-2099-1000", "PkgName": "libexample", "InstalledVersion": "1.0", "FixedVersion": "1.1", "Severity": "CRITICAL", "Title": "Example RCE"}
+    ]}
+  ]}},
+  {"image": "example/clean:1.0", "report": {"Results": [{"Target": "x", "Vulnerabilities": null}]}}
+]

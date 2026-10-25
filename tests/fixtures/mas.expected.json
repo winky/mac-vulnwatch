@@ -1,0 +1,30 @@
+[
+  {
+    "advisories": [],
+    "available": "10.4.5",
+    "command": "mas upgrade 408981434",
+    "id": "mas/408981434",
+    "installed": "10.4.4",
+    "kind": "update",
+    "package": "iMovie",
+    "remediation": "Update the app from the App Store. The App Store does not say whether this update contains security fixes.",
+    "severity": "unknown",
+    "source": "mas",
+    "title": "iMovie 10.4.4: 10.4.5 is available",
+    "url": "https://apps.apple.com/app/id408981434"
+  },
+  {
+    "advisories": [],
+    "available": "2.1",
+    "command": "mas upgrade 123456789",
+    "id": "mas/123456789",
+    "installed": "2.0",
+    "kind": "update",
+    "package": "Some App (Pro)",
+    "remediation": "Update the app from the App Store. The App Store does not say whether this update contains security fixes.",
+    "severity": "unknown",
+    "source": "mas",
+    "title": "Some App (Pro) 2.0: 2.1 is available",
+    "url": "https://apps.apple.com/app/id123456789"
+  }
+]

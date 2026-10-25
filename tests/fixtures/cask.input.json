@@ -1,0 +1,6 @@
+{
+  "formulae": [],
+  "casks": [
+    {"name": "example-browser", "installed_versions": ["120.0.1"], "current_version": "121.0.0"}
+  ]
+}

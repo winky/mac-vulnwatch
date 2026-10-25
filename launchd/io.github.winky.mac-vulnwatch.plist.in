@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Filled in by `make install`: @REPO_DIR@, @LOG_DIR@, @HOME@, @HOUR@ and @MINUTE@.
+
+  RunAtLoad is false so that installing does not start a scan as a side effect.
+
+  A LaunchAgent only runs while someone is logged in, and with FileVault on it is not loaded
+  until the disk is unlocked. A scan missed while the Mac was asleep or locked runs when it
+  wakes, and nothing in the scan depends on the time it ran.
+
+  launchd reads no shell startup files, so PATH is set here: Homebrew on both architectures,
+  then ~/.local/bin and the asdf shims, where asdf commonly lives.
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>io.github.winky.mac-vulnwatch</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>@REPO_DIR@/bin/mac-vulnwatch</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>@HOUR@</integer>
+        <key>Minute</key>
+        <integer>@MINUTE@</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:@HOME@/.local/bin:@HOME@/.asdf/shims:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>@LOG_DIR@/mac-vulnwatch.log</string>
+    <key>StandardErrorPath</key>
+    <string>@LOG_DIR@/mac-vulnwatch.log</string>
+</dict>
+</plist>

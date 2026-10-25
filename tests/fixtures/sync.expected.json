@@ -1,0 +1,31 @@
+[
+  {
+    "add_labels": [
+      "severity:high"
+    ],
+    "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/openssl@3 -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Source | `brew` |\n| Package | `openssl@3` |\n| Installed | `3.6.4` |\n| Available | `3.6.5` |\n| Severity | high |\n| Kind | vulnerability |\n| Reference | https://github.com/openssl/openssl |\n\n### Remediation\n\nUpgrade to 3.6.5. A newer release does not always carry the fix, so check the advisories.\n\n```sh\nbrew upgrade openssl@3\n```\n\n### Advisories\n\n| ID | Severity | Summary | Fixed in |\n|---|---|---|---|\n| [CVE-2099-0001](https://osv.dev/vulnerability/CVE-2099-0001) | high | Example overflow in the \\| parser | 3.6.5 |\n| [CVE-2099-0002](https://osv.dev/vulnerability/CVE-2099-0002) | low | Example timing leak |  |\n\n---\nReported by [mac-vulnwatch](https://github.com/winky/mac-vulnwatch). Closed automatically once a scan no longer finds it.\n",
+    "number": 1,
+    "op": "update",
+    "remove_labels": [
+      "severity:low"
+    ],
+    "title": "[test-mac] openssl@3 3.6.4: 2 known vulnerabilities"
+  },
+  {
+    "body": "<!-- mac-vulnwatch:fingerprint=test-mac/brew/examplelib -->\n| | |\n|---|---|\n| Host | `test-mac` |\n| Source | `brew` |\n| Package | `examplelib` |\n| Installed | `1.2.0` |\n| Available | - |\n| Severity | unknown |\n| Kind | vulnerability |\n| Reference | https://github.com/example/examplelib |\n\n### Remediation\n\nNo newer version in Homebrew yet. Follow the advisories, or uninstall the formula if nothing needs it.\n\n### Advisories\n\n| ID | Severity | Summary | Fixed in |\n|---|---|---|---|\n| [CVE-2099-0003](https://osv.dev/vulnerability/CVE-2099-0003) | unknown | Example loop | 5e821de8256d |\n\n---\nReported by [mac-vulnwatch](https://github.com/winky/mac-vulnwatch). Closed automatically once a scan no longer finds it.\n",
+    "labels": [
+      "mac-vulnwatch",
+      "host:test-mac",
+      "source:brew",
+      "severity:unknown",
+      "kind:vulnerability"
+    ],
+    "op": "create",
+    "title": "[test-mac] examplelib 1.2.0: 1 known vulnerability"
+  },
+  {
+    "comment": "No longer found on `test-mac` by the scan at 2099-01-01T00:00:00Z. Closing.",
+    "number": 2,
+    "op": "close"
+  }
+]

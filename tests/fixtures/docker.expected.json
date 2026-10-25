@@ -1,0 +1,33 @@
+[
+  {
+    "advisories": [
+      {
+        "fixed": [
+          "1.1"
+        ],
+        "id": "CVE-2099-1000",
+        "severity": "critical",
+        "summary": "libexample 1.0: Example RCE",
+        "url": "https://avd.aquasec.com/nvd/cve-2099-1000"
+      },
+      {
+        "fixed": [],
+        "id": "CVE-2099-1001",
+        "severity": "high",
+        "summary": "libother 2.0: Example DoS",
+        "url": "https://avd.aquasec.com/nvd/cve-2099-1001"
+      }
+    ],
+    "available": null,
+    "command": "docker pull example/app:latest",
+    "id": "docker/example/app:latest",
+    "installed": "example/app:latest",
+    "kind": "vulnerability",
+    "package": "example/app:latest",
+    "remediation": "Pull or rebuild the image on a newer base. 1 of these have a fixed version upstream.",
+    "severity": "critical",
+    "source": "docker",
+    "title": "example/app:latest: 2 vulnerabilities",
+    "url": null
+  }
+]

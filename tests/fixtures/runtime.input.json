@@ -1,0 +1,21 @@
+{
+  "installs": [
+    {"tool": "nodejs", "product": "nodejs", "version": "24.20.0"},
+    {"tool": "nodejs", "product": "nodejs", "version": "24.21.0"},
+    {"tool": "nodejs", "product": "nodejs", "version": "25.2.0"},
+    {"tool": "nodejs", "product": "nodejs", "version": "26.12.1"},
+    {"tool": "python", "product": "python", "version": "3.12.4"},
+    {"tool": "python", "product": "python", "version": "3.13.0rc1"}
+  ],
+  "products": {
+    "nodejs": [
+      {"name": "26", "isEol": false, "eolFrom": "2029-04-30", "latest": {"name": "26.12.1", "link": "https://example.invalid/26"}},
+      {"name": "25", "isEol": true, "eolFrom": "2026-06-01", "latest": {"name": "25.9.0", "link": "https://example.invalid/25"}},
+      {"name": "24", "isEol": false, "eolFrom": "2028-04-30", "latest": {"name": "24.22.1", "link": "https://example.invalid/24"}}
+    ],
+    "python": [
+      {"name": "3.13", "isEol": false, "eolFrom": "2029-10-31", "latest": {"name": "3.13.9", "link": null}},
+      {"name": "3.12", "isEol": false, "eolFrom": "2028-10-31", "latest": {"name": "3.12.4", "link": null}}
+    ]
+  }
+}
