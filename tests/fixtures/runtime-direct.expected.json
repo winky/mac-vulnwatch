@@ -1,0 +1,72 @@
+[
+  {
+    "advisories": [],
+    "available": "1.24.13",
+    "command": null,
+    "id": "runtime/go@1.24",
+    "installed": "1.24.1",
+    "kind": "update",
+    "package": "go@1.24",
+    "remediation": "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains. Download the installer from https://go.dev/dl/.",
+    "severity": "unknown",
+    "source": "runtime",
+    "title": "go 1.24.1: 1.24.13 is available in the 1.24 line",
+    "url": "https://endoflife.date/go"
+  },
+  {
+    "advisories": [],
+    "available": null,
+    "command": null,
+    "id": "runtime/oracle-jdk@8",
+    "installed": "1.8.0_392",
+    "kind": "eol",
+    "package": "oracle-jdk@8",
+    "remediation": "Move to a supported release line. This one no longer receives security fixes. Download a current release from Oracle Corporation.",
+    "severity": "high",
+    "source": "runtime",
+    "title": "java (oracle-jdk) 1.8.0_392: release line 8 reached end of life on 2022-03-31",
+    "url": "https://endoflife.date/oracle-jdk"
+  },
+  {
+    "advisories": [],
+    "available": null,
+    "command": null,
+    "id": "runtime/postgresql@14",
+    "installed": "14.13_1",
+    "kind": "eol",
+    "package": "postgresql@14",
+    "remediation": "Move to a supported release line. This one no longer receives security fixes. Install a newer versioned formula (brew search postgresql) and move to it.",
+    "severity": "high",
+    "source": "runtime",
+    "title": "postgresql@14 (postgresql) 14.13_1: release line 14 reached end of life on 2026-11-12",
+    "url": "https://endoflife.date/postgresql"
+  },
+  {
+    "advisories": [],
+    "available": "3.13.9",
+    "command": null,
+    "id": "runtime/python@3.13",
+    "installed": "3.13.0",
+    "kind": "update",
+    "package": "python@3.13",
+    "remediation": "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains. Download the installer from https://www.python.org/downloads/macos/.",
+    "severity": "unknown",
+    "source": "runtime",
+    "title": "python 3.13.0: 3.13.9 is available in the 3.13 line",
+    "url": "https://endoflife.date/python"
+  },
+  {
+    "advisories": [],
+    "available": null,
+    "command": "rustup update stable",
+    "id": "runtime/rust@1.80",
+    "installed": "1.80.0",
+    "kind": "eol",
+    "package": "rust@1.80",
+    "remediation": "Move to a supported release line. This one no longer receives security fixes.",
+    "severity": "high",
+    "source": "runtime",
+    "title": "rust 1.80.0: release line 1.80 reached end of life on 2024-09-05",
+    "url": "https://endoflife.date/rust"
+  }
+]
