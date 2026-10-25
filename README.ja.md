@@ -69,8 +69,8 @@ LaunchAgent として、ログイン中のあなたの権限で動く。予定�
 ### GitHub Issue
 
 ```sh
-gh repo create your-name/machine-vulns --private
-echo 'GITHUB_REPO=your-name/machine-vulns' >> ~/.config/mac-vulnwatch/config
+gh repo create your-name/vuln-findings --private
+echo 'GITHUB_REPO=your-name/vuln-findings' >> ~/.config/mac-vulnwatch/config
 mac-vulnwatch --dry-run   # 起票される Issue が "would open ..." として出る
 ```
 
@@ -81,10 +81,15 @@ mac-vulnwatch --dry-run   # 起票される Issue が "would open ..." として
 
 - 新しい検出は Issue を起票する
 - 変化した検出（版が変わった、アドバイザリが増えた）は Issue を更新する
-- 消えた検出は Issue にコメントを付けて close する
+- 消えた検出は、理由をコメントに書いて Issue を close する
 
 close するのはそのコレクタが**成功したときだけ**。失敗やスキップでは何も close しないので、
-ネットワークエラーを修正済みと取り違えない。自分で付けたラベルには触らない。
+ネットワークエラーを修正済みと取り違えない。
+
+アドバイザリのデータの変化も修正済みと取り違えない。インストール済みのものを把握している
+コレクタ（`brew`、`packages`）では、起票したときの版が無くなって初めて close する。その版が
+入ったまま検出だけが消えたら、Issue は `needs-review` ラベルとコメント1件を付けて開いたままにする。
+変わったのは機体ではなくデータの方だからである。自分で付けたラベルには触らない。
 
 ## 出力
 
@@ -94,6 +99,35 @@ close するのはそのコレクタが**成功したときだけ**。失敗や�
 | `~/.local/state/mac-vulnwatch/latest.{md,json}` | 最後のレポート |
 | 通知 | 前回のスキャンに無かった検出があったとき |
 | 終了コード | コレクタか Issue 同期が失敗したら `1`、それ以外は `0` |
+
+## 制約
+
+mac-vulnwatch の網羅性は情報源の網羅性で決まり、完全な情報源は無い。
+
+- **Homebrew の formula** は `brew vulns` で見る。OSV.dev のレコードをリポジトリとタグで照合する
+  ので、照合できないアドバイザリは見逃す。実際に見た例は2つ。
+  - GitHub ミラーからビルドされる formula で、OSV.dev がプロジェクト自身のリポジトリの下にだけ
+    アドバイザリを登録している場合。2026年10月、FFmpeg のアドバイザリは `github.com/ffmpeg/ffmpeg`
+    では引けなくなり、`git.ffmpeg.org` でしか見つからなくなった。
+  - NVD に CPE でだけ記録され、OSV.dev の git の範囲には無いアドバイザリ。
+
+  一方で `brew vulns` は、Homebrew が formula に当てたパッチを考慮する。CPE で照合するスキャナは
+  これを考慮しない。
+- **cask・App Store アプリ・macOS** には脆弱性のデータが無い。分かるのは「更新がある」ことだけ。
+- **runtime** は endoflife.date から EOL とパッチの遅れを見る。CVE は見ない。
+- **packages** は、npm は PATH 上の Node.js のものだけ、cargo は依存を含まない。
+
+Homebrew について別の観点からも見たいなら、SBOM スキャナで `brew vulns` の抜けの一部を補える。
+ただし CPE による照合と、見えないパッチによる誤検知が増える。組み込んではいないので、手で動かす:
+
+```sh
+brew install syft grype
+syft scan dir:"$(brew --prefix)/Cellar" --select-catalogers homebrew -o syft-json=sbom.json
+grype sbom:sbom.json
+```
+
+今の syft は versioned formula と revision を NVD と違う形で書く（`openssl\@3`、`3.6.4_1`）ので、
+補正しない限りそれらは見逃す。grype がダウンロードする脆弱性 DB はディスク上で約 3GB ある。
 
 ## 開発
 

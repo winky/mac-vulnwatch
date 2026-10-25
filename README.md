@@ -81,8 +81,8 @@ optional.
 ### GitHub issues
 
 ```sh
-gh repo create your-name/machine-vulns --private
-echo 'GITHUB_REPO=your-name/machine-vulns' >> ~/.config/mac-vulnwatch/config
+gh repo create your-name/vuln-findings --private
+echo 'GITHUB_REPO=your-name/vuln-findings' >> ~/.config/mac-vulnwatch/config
 mac-vulnwatch --dry-run   # shows "would open ..." for each issue
 ```
 
@@ -94,10 +94,15 @@ Each finding becomes one issue, labelled `host:<name>`, `source:<collector>`,
 
 - a new finding opens an issue
 - a finding that changed (new version, new advisory) updates its issue
-- a finding that is gone closes its issue with a comment
+- a finding that is gone closes its issue with a comment saying why
 
 An issue is closed only when its collector **ran successfully**. A failed or skipped
-collector never closes anything, so a network error is not mistaken for a fix. Labels you add
+collector never closes anything, so a network error is not mistaken for a fix.
+
+Nor is a change in the advisory data. Where a collector knows what is installed (`brew`,
+`packages`), an issue is closed only once the version it was filed for is gone. If a finding
+disappears while that version is still installed, the issue stays open with a `needs-review`
+label and one comment: something changed in the data, not on the machine. Labels you add
 yourself are left alone.
 
 ## Output
@@ -112,6 +117,38 @@ yourself are left alone.
 ```sh
 mac-vulnwatch --only brew,macos --no-sync --format json | jq '.findings[] | select(.severity == "high")'
 ```
+
+## Limitations
+
+mac-vulnwatch is only as complete as its sources, and none of them is complete.
+
+- **Homebrew formulae** are checked by `brew vulns`, which matches OSV.dev records by
+  repository and tag. Advisories it cannot match are missed. Two cases seen in practice:
+  - A formula built from a GitHub mirror, when OSV.dev indexes the advisory under the
+    project's own repository. In October 2026 FFmpeg's advisories stopped matching
+    `github.com/ffmpeg/ffmpeg` and were found only under `git.ffmpeg.org`.
+  - Advisories recorded only in NVD with CPEs, and never in OSV.dev's git ranges.
+
+  `brew vulns` does account for patches Homebrew applies to a formula, which CPE-based scanners
+  do not.
+- **Casks, App Store apps and macOS** have no vulnerability data: only "an update exists".
+- **runtime** reports end of life and patch lag from endoflife.date, not CVEs.
+- **packages** sees npm for the Node.js on PATH only, and cargo installs without their
+  dependencies.
+
+For a second opinion on Homebrew, an SBOM scanner covers some of what `brew vulns` misses, at
+the cost of false positives from CPE matching and from patches it cannot see. It is not built
+in; to run it by hand:
+
+```sh
+brew install syft grype
+syft scan dir:"$(brew --prefix)/Cellar" --select-catalogers homebrew -o syft-json=sbom.json
+grype sbom:sbom.json
+```
+
+syft currently names versioned formulae and revisions in a way NVD does not
+(`openssl\@3`, `3.6.4_1`), so those are missed unless corrected. The vulnerability database
+grype downloads is about 3 GB on disk.
 
 ## Development
 
