@@ -83,6 +83,19 @@ else
   failed=$((failed + 1))
 fi
 
+# The same, with the bodies as GitHub hands them back: an extra trailing newline on some, CRLF
+# line endings on others. Before this was handled, every daily scan edited every issue.
+jq '.issues |= (to_entries | map(if .key % 2 == 0 then .value.body += "\n\n"
+                                  else .value.body |= gsub("\n"; "\r\n") end | .value))' \
+  "${WORK}/settled.json" > "${WORK}/roundtrip.json"
+if [ "$(jq -L "${ROOT}/lib" -f "${ROOT}/lib/sync.jq" "${WORK}/roundtrip.json" | jq length)" = 0 ]; then
+  echo "ok   sync ignores whitespace GitHub adds"
+  passed=$((passed + 1))
+else
+  echo "FAIL sync ignores whitespace GitHub adds: a round-tripped body still produced actions"
+  failed=$((failed + 1))
+fi
+
 # The Markdown report renders, and escapes a | inside a summary.
 jq -n --slurpfile findings <(bash "${ROOT}/collectors/brew.sh" --parse < "${FIXTURES}/brew.input.json") '
   {host: "test-mac", scanned_at: "2099-01-01T00:00:00Z", version: "0.0.0",

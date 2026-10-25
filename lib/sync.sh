@@ -50,6 +50,8 @@ ensure_labels() {
 }
 
 # sync_apply REPO PLAN
+#
+# Bodies are piped with jq -j rather than -r: -r appends a newline, and GitHub keeps it.
 # Prints one line per action taken. Returns non-zero if any action failed, after trying all.
 sync_apply() {
   local repo="$1" plan="$2" action op number label failed=0 args
@@ -67,7 +69,7 @@ sync_apply() {
         while IFS= read -r label; do
           args+=(--label "${label}")
         done < <(jq -r '.labels[]' <<< "${action}")
-        if jq -r .body <<< "${action}" | gh issue create --repo "${repo}" \
+        if jq -j .body <<< "${action}" | gh issue create --repo "${repo}" \
           --title "$(jq -r .title <<< "${action}")" --body-file - "${args[@]}" > /dev/null; then
           echo "opened   $(jq -r .title <<< "${action}")"
         else
@@ -82,7 +84,7 @@ sync_apply() {
         while IFS= read -r label; do
           [ -n "${label}" ] && args+=(--remove-label "${label}")
         done < <(jq -r '.remove_labels[]' <<< "${action}")
-        if jq -r .body <<< "${action}" | gh issue edit "${number}" --repo "${repo}" \
+        if jq -j .body <<< "${action}" | gh issue edit "${number}" --repo "${repo}" \
           --title "$(jq -r .title <<< "${action}")" --body-file - ${args[@]+"${args[@]}"} > /dev/null; then
           echo "updated  #${number} $(jq -r .title <<< "${action}")"
         else
