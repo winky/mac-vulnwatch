@@ -20,6 +20,10 @@
 #
 # The id leaves out the version on purpose. An upgrade that still leaves something behind
 # updates the same issue instead of closing one and opening another.
+#
+# Include this from a program (jq -f, or a filter on the command line), never from another
+# module. jq 1.8.2 aborts with "Unknown function type" when a module included by a module calls
+# one of its own functions, and most functions here do.
 
 def severity_rank:
   (ascii_downcase) as $s

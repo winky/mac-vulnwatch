@@ -1,0 +1,47 @@
+[
+  {
+    "command": "npm install -g corepack@latest",
+    "ecosystem": "npm",
+    "manager": "npm",
+    "name": "corepack",
+    "version": "0.34.0",
+    "via": "corepack",
+    "via_version": "0.34.0"
+  },
+  {
+    "command": "npm install -g example-cli@latest",
+    "ecosystem": "npm",
+    "manager": "npm",
+    "name": "example-cli",
+    "version": "2.0.0",
+    "via": "example-cli",
+    "via_version": "2.0.0"
+  },
+  {
+    "command": "npm install -g example-cli@latest",
+    "ecosystem": "npm",
+    "manager": "npm",
+    "name": "semver",
+    "version": "7.5.1",
+    "via": "example-cli",
+    "via_version": "2.0.0"
+  },
+  {
+    "command": "npm install -g example-cli@latest",
+    "ecosystem": "npm",
+    "manager": "npm",
+    "name": "glob",
+    "version": "10.0.0",
+    "via": "example-cli",
+    "via_version": "2.0.0"
+  },
+  {
+    "command": "npm install -g example-cli@latest",
+    "ecosystem": "npm",
+    "manager": "npm",
+    "name": "brace-expansion",
+    "version": "2.0.1",
+    "via": "example-cli",
+    "via_version": "2.0.0"
+  }
+]
