@@ -1,9 +1,11 @@
 #!/bin/bash
 #
 # collectors/runtime.sh
-# Language runtimes installed through asdf, checked against endoflife.date.
+# Tools installed through asdf or mise, checked against endoflife.date.
 #
-# Two things are reported, per runtime and release line (nodejs 24, python 3.12):
+# Any tool that names an endoflife.date product (or one of its aliases) is checked:
+# nodejs, python, ruby, golang, terraform, kubectl, java and so on. The mapping lives in
+# lib/runtime.jq. Two things are reported, per product and release line (nodejs 24, python 3.12):
 #
 #   - the line has reached end of life, so it no longer gets security fixes   -> kind "eol"
 #   - the newest installed version in the line is behind the line's latest    -> kind "update"
@@ -12,10 +14,12 @@
 # an upgrade are not what runs, and reporting each of them would make every upgrade look
 # unfinished.
 #
-# Runtimes installed by Homebrew are covered by the brew collector instead.
+# Both managers are read when both are installed, and a tool installed through both is one
+# finding: findings are keyed by product. Skipped when neither is installed. Tools installed by
+# Homebrew are covered by the brew collector instead.
 #
 #   collectors/runtime.sh            scan this machine
-#   collectors/runtime.sh --parse    read {"installs": [...], "products": {...}} on stdin instead
+#   collectors/runtime.sh --parse    read {"index", "installs", "products"} on stdin instead
 #
 set -euo pipefail
 
@@ -25,24 +29,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 ENDOFLIFE_API="${ENDOFLIFE_API:-https://endoflife.date/api/v1/products}"
 
-# asdf plugin name -> endoflife.date product. A plugin not listed here is not checked.
-product_for() {
-  case "$1" in
-    nodejs) echo nodejs ;;
-    python) echo python ;;
-    ruby) echo ruby ;;
-    golang | go) echo go ;;
-    php) echo php ;;
-    java) echo "" ;; # Several vendors share the plugin, and their release lines differ.
-    *) echo "" ;;
-  esac
-}
-
 parse() {
   jq -L "${ROOT}/lib" '
     include "findings";
-    .products as $products
+    include "runtime";
+    .index as $index
+    | .products as $products
     | [.installs[]
+       | resolve($index)
        | . as $install
        | ($products[.product] // []) as $releases
        # The release line a version belongs to is the longest release name it starts with:
@@ -51,70 +45,116 @@ parse() {
           | max_by(.name | length)) as $line
        | select($line != null)
        | . + {line: $line}]
-    | group_by([.tool, .line.name])
+    | group_by([.product, .line.name])
     | map(max_by(.version | version_key))
     | [.[]
        | .line as $line
+       # What the user typed (kubectl, golang), with the product it was matched to when that
+       # differs, so a title says both what is installed and what the dates are about.
+       | (if .tool == .product then .tool else "\(.tool) (\(.product))" end) as $name
        | if $line.isEol then {
-           id: "runtime/\(.tool)@\($line.name)",
+           id: "runtime/\(.product)@\($line.name)",
            source: "runtime",
            kind: "eol",
-           package: "\(.tool)@\($line.name)",
+           package: "\(.product)@\($line.name)",
            installed: .version,
            available: null,
            severity: "high",
-           title: "\(.tool) \(.version): release line \($line.name) reached end of life\(if $line.eolFrom then " on \($line.eolFrom)" else "" end)",
+           title: "\($name) \(.version): release line \($line.name) reached end of life\(if $line.eolFrom then " on \($line.eolFrom)" else "" end)",
            remediation: "Move to a supported release line. This one no longer receives security fixes.",
            command: null,
            url: "https://endoflife.date/\(.product)",
            advisories: []
          }
-         elif ($line.latest.name // null) != null and (.version | version_key) < ($line.latest.name | version_key) then {
-           id: "runtime/\(.tool)@\($line.name)",
+         elif (.eol_only | not) and ($line.latest.name // null) != null
+              and (.version | version_key) < ($line.latest.name | version_key) then {
+           id: "runtime/\(.product)@\($line.name)",
            source: "runtime",
            kind: "update",
-           package: "\(.tool)@\($line.name)",
+           package: "\(.product)@\($line.name)",
            installed: .version,
            available: $line.latest.name,
            severity: "unknown",
-           title: "\(.tool) \(.version): \($line.latest.name) is available in the \($line.name) line",
+           title: "\($name) \(.version): \($line.latest.name) is available in the \($line.name) line",
            remediation: "Install the latest patch release and switch to it. Patch releases are where security fixes land; see the changelog for what this one contains.",
-           command: "asdf install \(.tool) \($line.latest.name)",
+           # mise upgrade moves within the requested range and switches to it; asdf only
+           # installs, and switching stays with the user (asdf set) since it may be per project.
+           command: (if .manager == "mise" then "mise upgrade \(.tool)"
+                     else "asdf install \(.tool) \($line.latest.name)" end),
            url: ($line.latest.link // "https://endoflife.date/\(.product)"),
            advisories: []
          }
          else empty end]'
 }
 
-fetch() {
-  local plugin product version installs products releases
-  installs="[]"
-  products="{}"
+# Prints [{manager, tool, version}] for everything asdf has installed.
+asdf_installs() {
+  local plugin version plugins
+  # Failing here is a failure, not "nothing installed": an empty list would close every issue.
+  plugins="$(asdf plugin list 2> /dev/null)" || {
+    log "asdf plugin list failed."
+    return 1
+  }
   while IFS= read -r plugin; do
     [ -n "${plugin}" ] || continue
-    product="$(product_for "${plugin}")"
-    [ -n "${product}" ] || continue
-
     # `asdf list nodejs` prints one version per line, the current one marked with *.
     while IFS= read -r version; do
       version="$(printf '%s' "${version}" | tr -d ' *')"
       [ -n "${version}" ] || continue
-      installs="$(jq -c --arg tool "${plugin}" --arg product "${product}" --arg version "${version}" \
-        '. + [{tool: $tool, product: $product, version: $version}]' <<< "${installs}")"
+      jq -nc --arg tool "${plugin}" --arg version "${version}" '{manager: "asdf", tool: $tool, version: $version}'
     done < <(asdf list "${plugin}" 2> /dev/null || true)
+  done <<< "${plugins}"
+}
 
-    if [ "$(jq --arg product "${product}" 'has($product)' <<< "${products}")" = false ]; then
-      if ! releases="$(curl -fsS --max-time 30 "${ENDOFLIFE_API}/${product}")"; then
-        log "Could not reach endoflife.date for ${product}."
-        exit 1
-      fi
-      products="$(jq -c --arg product "${product}" --argjson body "${releases}" \
-        '. + {($product): $body.result.releases}' <<< "${products}")"
+# Prints [{manager, tool, version}] for everything mise has installed, whether or not any
+# configuration asks for it -- the scan runs from launchd, outside every project.
+mise_installs() {
+  local listing
+  listing="$(mise ls --installed --json 2> /dev/null)" || {
+    log "mise ls failed."
+    return 1
+  }
+  jq -c 'to_entries[] | .key as $tool | .value[] | select(.installed != false)
+         | {manager: "mise", tool: $tool, version}' <<< "${listing}"
+}
+
+fetch() {
+  local work product
+  work="$(mktemp -d "${TMPDIR:-/tmp}/mac-vulnwatch.XXXXXX")"
+  # shellcheck disable=SC2064 # expand now: work is local and gone by the time EXIT fires
+  trap "rm -rf '${work}'" EXIT
+
+  : > "${work}/installs.jsonl"
+  if command -v asdf > /dev/null 2>&1; then
+    asdf_installs >> "${work}/installs.jsonl" || exit 1
+  fi
+  if command -v mise > /dev/null 2>&1; then
+    mise_installs >> "${work}/installs.jsonl" || exit 1
+  fi
+  jq -s . "${work}/installs.jsonl" > "${work}/installs.json"
+
+  if ! curl -fsS --max-time 30 "${ENDOFLIFE_API}" > "${work}/index-response.json"; then
+    log "Could not reach endoflife.date."
+    exit 1
+  fi
+  jq '.result' "${work}/index-response.json" > "${work}/index.json"
+
+  # Only the products something is installed for: one request each.
+  echo '{}' > "${work}/products.json"
+  while IFS= read -r product; do
+    if ! curl -fsS --max-time 30 "${ENDOFLIFE_API}/${product}" > "${work}/product.json"; then
+      log "Could not reach endoflife.date for ${product}."
+      exit 1
     fi
-  done < <(asdf plugin list 2> /dev/null || true)
+    jq --arg product "${product}" --slurpfile body "${work}/product.json" \
+      '. + {($product): $body[0].result.releases}' "${work}/products.json" > "${work}/products.next"
+    mv "${work}/products.next" "${work}/products.json"
+  done < <(jq -r -L "${ROOT}/lib" --slurpfile index "${work}/index.json" \
+    'include "runtime"; [.[] | resolve($index[0]) | .product] | unique | .[]' "${work}/installs.json")
 
-  jq -n --argjson installs "${installs}" --argjson products "${products}" \
-    '{installs: $installs, products: $products}'
+  jq -n --slurpfile index "${work}/index.json" --slurpfile installs "${work}/installs.json" \
+    --slurpfile products "${work}/products.json" \
+    '{index: $index[0], installs: $installs[0], products: $products[0]}'
 }
 
 case "${1:-}" in
@@ -122,7 +162,10 @@ case "${1:-}" in
     parse
     ;;
   "")
-    command -v asdf > /dev/null 2>&1 || exit "${EXIT_NOT_APPLICABLE}"
+    if ! command -v asdf > /dev/null 2>&1 && ! command -v mise > /dev/null 2>&1; then
+      log "Neither asdf nor mise is installed."
+      exit "${EXIT_NOT_APPLICABLE}"
+    fi
     fetch | parse
     ;;
   *)

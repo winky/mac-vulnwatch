@@ -1,11 +1,26 @@
 {
+  "index": [
+    {"name": "nodejs", "aliases": ["node"]},
+    {"name": "python", "aliases": []},
+    {"name": "go", "aliases": ["golang"]},
+    {"name": "kubernetes", "aliases": ["k8s"]},
+    {"name": "eclipse-temurin", "aliases": ["temurin"]},
+    {"name": "azul-zulu", "aliases": ["zulu"]}
+  ],
   "installs": [
-    {"tool": "nodejs", "product": "nodejs", "version": "24.20.0"},
-    {"tool": "nodejs", "product": "nodejs", "version": "24.21.0"},
-    {"tool": "nodejs", "product": "nodejs", "version": "25.2.0"},
-    {"tool": "nodejs", "product": "nodejs", "version": "26.12.1"},
-    {"tool": "python", "product": "python", "version": "3.12.4"},
-    {"tool": "python", "product": "python", "version": "3.13.0rc1"}
+    {"manager": "asdf", "tool": "nodejs", "version": "24.20.0"},
+    {"manager": "asdf", "tool": "nodejs", "version": "24.21.0"},
+    {"manager": "asdf", "tool": "nodejs", "version": "25.2.0"},
+    {"manager": "asdf", "tool": "nodejs", "version": "26.12.1"},
+    {"manager": "asdf", "tool": "nodejs", "version": "system"},
+    {"manager": "asdf", "tool": "python", "version": "3.12.4"},
+    {"manager": "asdf", "tool": "python", "version": "3.13.0rc1"},
+    {"manager": "asdf", "tool": "golang", "version": "1.24.2"},
+    {"manager": "asdf", "tool": "kubectl", "version": "v1.36.1"},
+    {"manager": "asdf", "tool": "java", "version": "temurin-21.0.2+13.0.LTS"},
+    {"manager": "asdf", "tool": "java", "version": "zulu-17.44.53"},
+    {"manager": "asdf", "tool": "java", "version": "openjdk-22"},
+    {"manager": "asdf", "tool": "not-a-product", "version": "1.0.0"}
   ],
   "products": {
     "nodejs": [
@@ -16,6 +31,18 @@
     "python": [
       {"name": "3.13", "isEol": false, "eolFrom": "2029-10-31", "latest": {"name": "3.13.9", "link": null}},
       {"name": "3.12", "isEol": false, "eolFrom": "2028-10-31", "latest": {"name": "3.12.4", "link": null}}
+    ],
+    "go": [
+      {"name": "1.24", "isEol": true, "eolFrom": "2026-02-11", "latest": {"name": "1.24.13", "link": null}}
+    ],
+    "kubernetes": [
+      {"name": "1.36", "isEol": false, "eolFrom": "2027-06-28", "latest": {"name": "1.36.5", "link": null}}
+    ],
+    "eclipse-temurin": [
+      {"name": "21", "isEol": false, "eolFrom": "2029-12-31", "latest": {"name": "21.0.9+10", "link": null}}
+    ],
+    "azul-zulu": [
+      {"name": "17", "isEol": true, "eolFrom": "2026-09-30", "latest": {"name": "17.62.17", "link": null}}
     ]
   }
 }

@@ -9,7 +9,8 @@
   wakes, and nothing in the scan depends on the time it ran.
 
   launchd reads no shell startup files, so PATH is set here: Homebrew on both architectures,
-  then ~/.local/bin and the asdf shims, where asdf commonly lives.
+  then ~/.local/bin (where asdf and mise commonly live) and the asdf and mise shims, so that
+  npm and friends resolve to the versions those managers select.
 -->
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -37,7 +38,7 @@
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/opt/homebrew/bin:/usr/local/bin:@HOME@/.local/bin:@HOME@/.asdf/shims:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <string>/opt/homebrew/bin:/usr/local/bin:@HOME@/.local/bin:@HOME@/.asdf/shims:@HOME@/.local/share/mise/shims:/usr/bin:/bin:/usr/sbin:/sbin</string>
     </dict>
 
     <key>StandardOutPath</key>
